@@ -1,14 +1,32 @@
-
 # include <err.h>
 # include <stdio.h>
 # include <stdlib.h>
 # include <time.h>
 # include <math.h>
-//# include "xortools.h"
-//The call function
-//
-#define epoch 10000
-#define learning_rate 0.85
+//# include "xortools" 
+/*Errors i can't solve : multiple definition 
+		Possible causes : - #ifndef ...#endif V
+						  - # include <*.c>
+*/
+
+
+
+
+#define generation 30000
+#define learn 0.85
+#define hiddenLayer  10
+#define nblayer 2
+
+double sigmoid(double z);
+double sigmoid_prime(double z);
+double getRandom(); 
+void feedForward();
+void backPropagation();
+void getRandWeight();
+void getRandHide();
+void display_result(int i);
+
+
 
 /* Structure of Network: 
 **			
@@ -23,60 +41,45 @@
 ** 			float ***weight_neurone;
 */
 
+
 //Let's assume there is 10 hidden layers : 
 // const : Variably modified array at file scope
 //const double hiddenLayer = 10; 
 //const int nblayer = 2; 
 //PROBLEM #define doesnt work. 
-#define hiddenLayer  10
-#define nblayer 2
-
-/*
- Input Layer    ||           || Hiden Layer                         || 
-
-    Input : 0  --- weight  ---> hidden node - Hidden node activated                              
-            
-            1  --- weight  --->    //               // 
-
-                               /
-                   wight >    /
-                             /
-                    Bias Node 
-
-*/
 
 
 
 
+double result;               // 1/0
+double getOutput;            
 
-double result;
-double getOutput;
-
-double input_weights[nblayer][hiddenLayer]; 
-double input_bias[nblayer] = {0.0, 0.0};
+double input_weights[nblayer][hiddenLayer]; //Input[Neurone0/1][index_of_wight_of_neurone_0/1] 
+double input_bias[nblayer];  // [0,0] 
 double input_layer[nblayer];  // 0|1
 
 //Hidden Layers
-double hidden_weights[hiddenLayer];
-double hidden_bias = 0;
-double hidden_layer[hiddenLayer];
+double h_weights[hiddenLayer];
+double h_bias = 0;
+double h_layer[hiddenLayer];
 
 
+
+// Normal sigmoid function
 double sigmoid(double z)
-{return (double)(1.0 / (1.0 + exp(-z)));}
+{
+	return (double)(1.0 / (1.0 + exp(-z)));
+}
 
 // Desactivation function: derivative of sigmoid. 
 double sigmoid_prime(double z)
-{return z * (1 - z);}
-
-// Get random value between -1 and 1
-double getRandom()
 {
-	srand(time(NULL));
-    double r =  (double)rand() / RAND_MAX - 1;
-	//printf("%f\n", r);
-	return r;
+	//return sig(y) x (1-sig(y))
+	return z * (1 - z);
+	
 }
+
+
 
 //the activation function of a neural network
 void feedForward() {
@@ -99,28 +102,27 @@ void feedForward() {
         for (int i = 0; i < nblayer; i++) {
             for (int j = 0; j < hiddenLayer; j++) {
 		    double tmp = input_weights[i][j] * input_layer[i];
-                    hidden_layer[j] += tmp;
+                    h_layer[j] += tmp;
             
-			//counter += 1; 
-			//Second :X  Need to go throw all the elements first. 
-			/*if(counter % nblayer == 0)
-		hidden_layer[j] = sigmoid(hidden_layer[j] + input_bias[j]);*/
+			/*Second :X  Need to go throw all the elements first. 
+			if(counter % nblayer == 0)
+		h_layer[j] = sigmoid(h_layer[j] + input_bias[j]);*/
         }
     }
 	
 	//Moved to here.
         //int k = 0; 
-        for (int x = 0; x < hiddenLayer; x++) { 
+        for (int i = 0; x < hiddenLayer; i++) { 
             //k %= nblayer;
-            hidden_layer[x] = sigmoid((-1) *  hidden_layer[x] );
-            getOutput += hidden_weights[x] * hidden_layer[x];
+            h_layer[i] = sigmoid((-1) *  h_layer[i] + input_bias[i%2] );
+            getOutput += h_weights[i] * h_layer[i];
             //k++;
     }
-    getOutput = sigmoid(getOutput + hidden_bias);
+    getOutput = sigmoid(getOutput + h_bias);
 }
 
-//Get back the gradient of the loss
 
+//Get back the gradient of the loss
 void backPropagation()
  { 
      double error = getOutput - result;
@@ -128,52 +130,45 @@ void backPropagation()
      //  //  // error *=error;
      // 1 XOR  0 is wrong TOFIX  
 
-	// Calculate the new values of input weights
+	// Calculate The new values of input weights
         for (int i = 0; i < hiddenLayer; i++) {
             for (int j = 0; j < nblayer; j++) {
-                double first = error * hidden_weights[i] * input_layer[j] * 
-				    sigmoid_prime(hidden_layer[i])*
+                double first = error * h_weights[i] * input_layer[j] * 
+				    sigmoid_prime(h_layer[i])*
 					sigmoid_prime(getOutput);
             
 			
-                input_weights[i][j]-= (first * learning_rate);
+                input_weights[i][j]-= (first * learn);
        }
 
-            double second = error * hidden_layer[i] *
+	   
+	// Calculate The new value of hidden weights
+            double second = error * h_layer[i] *
                         sigmoid_prime(getOutput);
-						
+			h_weights[i] -= second * learn;
 
-            hidden_weights[i] -= second * learning_rate;
-
-            double deltab1 = error * sigmoid_prime(getOutput) *
-                        hidden_weights[i] *
-                        sigmoid_prime(hidden_layer[i]);
+            
+	// Calculate The new value of Bias input
+			double inputbiasupdate = error * sigmoid_prime(getOutput) *
+                        h_weights[i] *
+                        sigmoid_prime(h_layer[i]);
 
         //for(int x = 0; x < nblayer; x++) 
-           input_bias[i] -= deltab1 * learning_rate;
+           input_bias[i%nblayer] -= inputbiasupdate * learn;
 
         double hbiasupdate = sigmoid_prime(getOutput) * error;
-        hidden_bias -= hbiasupdate * learning_rate;
+        h_bias -= hbiasupdate * learn;
     }
 }
-//}
 
-void display_result(int i) {
-   // if(i%1000 == 0 && x == 4) printf("Generation : %d\n",i);
-    //rintf("Generation : %d\n",i);
-    
-	if(i > epoch-10)
-            printf(
-	        "%0.f | %0.f => %f || %f\n",
-	        input_layer[0],
-	        input_layer[1],
-		getOutput,
-	        result
-	        
-    );
+// Get random value between 0 and 1
+double getRandom()
+{
+	srand(time(NULL));
+    double r =  (double)rand() / RAND_MAX - 1;
+	//printf("%d", r);
+	return r;
 }
-
-
 
 void getRandWeight() {
     for (int i = 0; i < 2; i++) {
@@ -187,132 +182,163 @@ void getRandWeight() {
 void getRandHide() {
     for (int i = 0; i < hiddenLayer; i++)
     {
-        hidden_weights[i] = getRandom();
+        h_weights[i] = getRandom();
     }
 }
 
-int main()
-{
-printf("\n\n");
-printf("	                          .,:;;;:.                                             \n ");       
-printf("                           ,##################:                                               \n");
-printf("                        +#########################`                                           \n");
-printf("                     ,##############################'                                         \n");
-printf("                   ;##################################+                                       \n");
-printf("                 ,######################################'                                     \n");
-printf("                ##########################################                                    \n");
-printf("              ,############################################'                                  \n");
-printf("             +###############################################                                 \n");
-printf("            ##################################################                                \n");
-printf("           ####################################################                               \n");
-printf("          #######################;.    `:#######################                              \n");
-printf("         #####################              '####################                             \n");
-printf("        '##################'                  ,###################                            \n");
-printf("       `##################                      +#################'                           \n");
-printf("       #################;                        `#################                           \n");
-printf("      #################.                           #################                          \n");
-printf("     `################`                             ################;                         \n");
-printf("     ################.                               ################                         \n");
-printf("    ,###############'                                .###############+                        \n");
-printf("    ################                                  +###############                        \n");
-printf("   `###############                                    ###############;                       \n");
-printf("   ###############'                                    .###############                       \n");
-printf("   ###############                                      ###############`                      \n");
-printf("  :##############;                                      `###############                      \n");
-printf("  ###############                                        ###############                      \n");
-printf("  ###############                                        :##############                      \n");
-printf(" `##############                                          ##############'                     \n");
-printf(" +##############                                          ###############                     \n");
-printf(" ###############                                          ;##############                     \n");
-printf(" ##############,                                           ##############                     \n");
-printf(" ##############                                            ##############`                    \n");
-printf(" ##############                                            ##############:                    \n");
-printf(".##############                                            ##############'                    \n");
-printf(":##############                                            '##############                    \n");
-printf("'##############                                            :##############                    \n");
-printf("+#############'                                            .##############                    \n");
-printf("##############;                                            `##############                    \n");
-printf("##############;                                            `##############                    \n");
-printf("+#############'                                            .##############                    \n");
-printf("'#############+                                            .##############                    \n");
-printf(";##############                                            ;##############                    \n");
-printf(".##############                                            +#############+                    \n");
-printf(" ##############                                            ##############:                    \n");
-printf(" ##############                                            ##############`                    \n");
-printf(" ##############                                            ##############                     \n");
-printf(" ##############;                                           ##############                     \n");
-printf(" +##############                                          '##############                     \n");
-printf(" `##############                                          ##############;                     \n");
-printf("  ##############`                                         ##############                      \n");
-printf("  ###############                                        '##############                      \n");
-printf("  ,##############                                        ##############+                      \n");
-printf("   ##############'                                      .##############                       \n");
-printf("   ###############                                      ###############                       \n");
-printf("    ##############+                                    ,##############,                       \n");
-printf("    ###############                                    ###############                        \n");
-printf("    `###############                                  ###############:                        \n");
-printf("     ###############+                                ,###############                         \n");
-printf("      ###############;                              `###############.                         \n");
-printf("      +###############:                             ################                          \n");
-printf("       ################;                          .################         `##########,      \n");
-printf("        #################                        '################,       ###############`    \n");
-printf("        :#################,                    `#################+       #################.   \n");
-printf("         +##################,                `###################        ##################   \n");
-printf("          #####################,          `+####################         ###################  \n");
-printf("           ####################################################          '###.      ########  \n");
-printf("            ##################################################           :#          #######` \n");
-printf("              ,############################################+                          ######+ \n");
-printf("                ##########################################.                           ######+ \n");
-printf("                 '#######################################                             ######; \n");
-printf("                   ####################################                              `######  \n");
-printf("                     ################################`                               #######  \n");
-printf("                       '##########################+                                 `#######  \n");
-printf("                          '####################+`                                   #######   \n");
-printf("                              :+###########;`                                      +#######   \n");
-printf("                                                                                  ,#######    \n");
-printf("                                                                                  #######,    \n");
-printf("                                                                                 ########     \n");
-printf("                                                                                ########      \n");
-printf("                                                                               ########       \n");
-printf("                                                                              ########        \n");
-printf("                                                                             ########`        \n");
-printf("                                                                            ########`         \n");
-printf("                                                                           ########`          \n");
-printf("                                                                          ########`           \n");
-printf("                                                                        `########`            \n");
-printf("                                                                        ######################\n");
-printf("                                                                        ######################\n");
-printf("                                                                        ######################\n");
-printf("                                                                        ######################\n");
-printf("                                                                        ######################\n");
-printf("\n\n\n\n\n");
-printf("x | y => Result   || Normally\n");
-    getRandWeight();
-    getRandHide();
-	
-	const double possible_Inputs[4][2] = {
-		{ 0, 0 },
-		{ 1, 0 },
-		{ 0, 1 },
-		{ 1, 1 }};
-	const double possible_Answers[4] = { 0, 1, 1, 0 };
+void display_result(int i) {
+   // if(i%1000 == 0 && x == 4) printf("Generation : %d\n",i);
+    //rintf("Generation : %d\n",i);
+    
+	if(i > generation-10)
+            printf(
+	        "||%0.f | %0.f || => %f || %f\n",
+	        input_layer[0],
+	        input_layer[1],
+		getOutput,
+	        result
+	        
+    );
+}
 
-    // train the network
-   // int display = 0;
-    for (int i = 0; i < epoch; i++) {
-        //display = 0;
-        for (int inputs = 0; inputs < 4; inputs++) {
-            input_layer[0] = possible_Inputs[inputs][0];
-            input_layer[1] = possible_Inputs[inputs][1];
-            //display +=1;
-            result = possible_Answers[inputs];
+int main(int argc, char *argv[])
+	{
+	printf("\n\n");
+	printf("	                          .,:;;;:.                                             \n ");       
+	printf("                           ,##################:                                               \n");
+	printf("                        +#########################`                                           \n");
+	printf("                     ,##############################'                                         \n");
+	printf("                   ;##################################+                                       \n");
+	printf("                 ,######################################'                                     \n");
+	printf("                ##########################################                                    \n");
+	printf("              ,############################################'                                  \n");
+	printf("             +###############################################                                 \n");
+	printf("            ##################################################                                \n");
+	printf("           ####################################################                               \n");
+	printf("          #######################;.    `:#######################                              \n");
+	printf("         #####################              '####################                             \n");
+	printf("        '##################'                  ,###################                            \n");
+	printf("       `##################                      +#################'                           \n");
+	printf("       #################;                        `#################                           \n");
+	printf("      #################.                           #################                          \n");
+	printf("     `################`                             ################;                         \n");
+	printf("     ################.                               ################                         \n");
+	printf("    ,###############'                                .###############+                        \n");
+	printf("    ################                                  +###############                        \n");
+	printf("   `###############                                    ###############;                       \n");
+	printf("   ###############'                                    .###############                       \n");
+	printf("   ###############                                      ###############`                      \n");
+	printf("  :##############;                                      `###############                      \n");
+	printf("  ###############                                        ###############                      \n");
+	printf("  ###############                                        :##############                      \n");
+	printf(" `##############                                          ##############'                     \n");
+	printf(" +##############                                          ###############                     \n");
+	printf(" ###############                                          ;##############                     \n");
+	printf(" ##############,                                           ##############                     \n");
+	printf(" ##############                                            ##############`                    \n");
+	printf(" ##############                                            ##############:                    \n");
+	printf(".##############                                            ##############'                    \n");
+	printf(":##############                                            '##############                    \n");
+	printf("'##############                                            :##############                    \n");
+	printf("+#############'                                            .##############                    \n");
+	printf("##############;                                            `##############                    \n");
+	printf("##############;                                            `##############                    \n");
+	printf("+#############'                                            .##############                    \n");
+	printf("'#############+                                            .##############                    \n");
+	printf(";##############                                            ;##############                    \n");
+	printf(".##############                                            +#############+                    \n");
+	printf(" ##############                                            ##############:                    \n");
+	printf(" ##############                                            ##############`                    \n");
+	printf(" ##############                                            ##############                     \n");
+	printf(" ##############;                                           ##############                     \n");
+	printf(" +##############                                          '##############                     \n");
+	printf(" `##############                                          ##############;                     \n");
+	printf("  ##############`                                         ##############                      \n");
+	printf("  ###############                                        '##############                      \n");
+	printf("  ,##############                                        ##############+                      \n");
+	printf("   ##############'                                      .##############                       \n");
+	printf("   ###############                                      ###############                       \n");
+	printf("    ##############+                                    ,##############,                       \n");
+	printf("    ###############                                    ###############                        \n");
+	printf("    `###############                                  ###############:                        \n");
+	printf("     ###############+                                ,###############                         \n");
+	printf("      ###############;                              `###############.                         \n");
+	printf("      +###############:                             ################                          \n");
+	printf("       ################;                          .################         `##########,      \n");
+	printf("        #################                        '################,       ###############`    \n");
+	printf("        :#################,                    `#################+       #################.   \n");
+	printf("         +##################,                `###################        ##################   \n");
+	printf("          #####################,          `+####################         ###################  \n");
+	printf("           ####################################################          '###.      ########  \n");
+	printf("            ##################################################           :#          #######` \n");
+	printf("              ,############################################+                          ######+ \n");
+	printf("                ##########################################.                           ######+ \n");
+	printf("                 '#######################################                             ######; \n");
+	printf("                   ####################################                              `######  \n");
+	printf("                     ################################`                               #######  \n");
+	printf("                       '##########################+                                 `#######  \n");
+	printf("                          '####################+`                                   #######   \n");
+	printf("                              :+###########;`                                      +#######   \n");
+	printf("                                                                                  ,#######    \n");
+	printf("                                                                                  #######,    \n");
+	printf("                                                                                 ########     \n");
+	printf("                                                                                ########      \n");
+	printf("                                                                               ########       \n");
+	printf("                                                                              ########        \n");
+	printf("                                                                             ########`        \n");
+	printf("                                                                            ########`         \n");
+	printf("                                                                           ########`          \n");
+	printf("                                                                          ########`           \n");
+	printf("                                                                        `########`            \n");
+	printf("                                                                        ######################\n");
+	printf("                                                                        ######################\n");
+	printf("                                                                        ######################\n");
+	printf("                                                                        ######################\n");
+	printf("                                                                        ######################\n");
+	printf("\n\n\n\n\n");
 
-            feedForward();
-            backPropagation();
-            if(i > epoch-10) display_result(i);
-            }
 
-        if(i > epoch-10)  printf("############################# \n");        
-    }
+
+
+	if(if (argc < 2)  
+    { 
+        // no arguments in ./main 
+ 
+    
+		printf("XOR Function test: \n\n");
+		printf("|| x | y || => Result   || Normally\n");
+		
+		getRandWeight();
+		getRandHide();
+		
+		input_bias = {0.0, 0.0};
+		
+		
+		const double InputsXY[4][2] = {
+			{ 0, 0 },
+			{ 1, 0 },
+			{ 0, 1 },
+			{ 1, 1 }};
+		const int AnswerOut[4] = { 0, 1, 1, 0 };
+
+		for (int i = 0; i < generation; i++) {
+			for (int inputs = 0; inputs < 4; inputs++) {
+				input_layer[0] = InputsXY[inputs][0];
+				input_layer[1] = InputsXY[inputs][1];
+				result = AnswerOut[inputs];
+			
+					//xor
+				feedForward();
+				backPropagation();
+				if(i > generation-10) display_result(i);
+				
+				}
+
+			if(i > generation-10)  printf("############################# \n");        
+		}
+	}
+	else{
+		printf("make sure you remove the extra argument %c ", argv[1] ); 
+	}
 
 }
