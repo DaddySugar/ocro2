@@ -22,16 +22,19 @@ int main(int argc, char ** argv)
 		makeitblackandwhite(img,img->w,img->h);
 		display_image(img);
 	}
+	else if(argv[1][0] == '3')
+		{
+			
+			img = load_image("index.bmp");
+			Line_Detection(img);
+			//Height_Detection(img);
+			
+			}
 	else{
 	
 		img = load_image("index.bmp");
 
 		if(argv[1][0] == '2') Line_Detection(img);
-		else if(argv[1][0] == '3')
-		{
-			Line_Detection(img);
-			Height_Detection(img);
-			}
 		
 		
 		
@@ -54,7 +57,7 @@ int main(int argc, char ** argv)
 			greyscale(img);
 			makeitblackandwhite(img,img->w,img->h);
 			Line_Detection(img);
-			Height_Detection(img);
+			//Height_Detection(img);
 		}
 		else {
 			printf("\tThis option does not exist\n");
