@@ -117,7 +117,9 @@ void feedForward() {
         //int k = 0; 
         for (int i = 0; i < hiddenLayer; i++) { 
             //k %= nblayer;
-            h_layer[i] = sigmoid((-1) *  h_layer[i] + input_bias[i] );
+            h_layer[i] = sigmoid((-1) *  h_layer[i] + 
+									input_bias[i /*%nblayer*/] );
+            
             getOutput += h_weights[i] * h_layer[i];
             //k++;
     }

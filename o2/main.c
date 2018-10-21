@@ -22,39 +22,45 @@ int main(int argc, char ** argv)
 		makeitblackandwhite(img,img->w,img->h);
 		display_image(img);
 	}
+	else{
 	
-	img = load_image("index.bmp");
+		img = load_image("index.bmp");
 
-	if(argv[1][0] == '2') Line_Detection(img);
-	else if(argv[1][0] == '3')
-	{
-		Line_Detection(img);
-		Height_Detection(img);
+		if(argv[1][0] == '2') Line_Detection(img);
+		else if(argv[1][0] == '3')
+		{
+			Line_Detection(img);
+			Height_Detection(img);
+			}
+		
+		
+		
+		else if(argv[1][0] == '4') {
+			SDL_Surface *abc = sdlnewchar(img,450,500,200,250);
+			display_image(abc);
 		}
-	
-	
-	
-	else if(argv[1][0] == '4') {
-		SDL_Surface *abc = sdlnewchar(img,450,500,200,250);
-		display_image(abc);
-	}
-	
-	else if(argv[1][0] == '6')
-	{
-		img = load_image("pdf_test.bmp");
-		greyscale(img);
-		makeitblackandwhite(img,img->w,img->h);
-		Line_Detection(img);
-	}
-	
-	else if(argv[1][0] == '7')
-	{
-		img = load_image("pdf_test.bmp");
-		greyscale(img);
-		makeitblackandwhite(img,img->w,img->h);
-		Line_Detection(img);
-		Height_Detection(img);
-	}
+		
+		else if(argv[1][0] == '6')
+		{
+			img = load_image("pdf_test.bmp");
+			greyscale(img);
+			makeitblackandwhite(img,img->w,img->h);
+			Line_Detection(img);
+		}
+		
+		else if(argv[1][0] == '7')
+		{
+			img = load_image("pdf_test.bmp");
+			greyscale(img);
+			makeitblackandwhite(img,img->w,img->h);
+			Line_Detection(img);
+			Height_Detection(img);
+		}
+		else {
+			printf("\tThis option does not exist\n");
+			return 1; 
+		}
+}
 	
 	if(argv[1][0] != '4' && argv[1][0] != '0' && argv[1][0] != '1' )
 		display_image(img);
