@@ -56,7 +56,8 @@ int main(int argc, char ** argv)
 		Height_Detection(img);
 	}
 	
-	if(argv[1][0] != '4' && argv[1][0] != '0' ) display_image(img);
+	if(argv[1][0] != '4' && argv[1][0] != '0' && argv[1][0] != '1' )
+		display_image(img);
 	
 
 	if(argc != 0) return 1; 
