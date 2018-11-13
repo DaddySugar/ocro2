@@ -2,8 +2,11 @@
 #include <stdlib.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-#include "treatment.h"
 #include "detection.h"
+#include "treatment.h"
+
+#include "bitmap.h"
+
 
 
 /* Draws a red line on the image at certain height between point 'A' and 'B'
@@ -32,12 +35,13 @@ void Vertical_Line(SDL_Surface* img,int w, int start, int end)
 {
 	for (int b = start; b < end; b++) 
 	{
-		putpixel(img, w, b, SDL_MapRGB(img->format, 0, 0, 0));
+		putpixel(img, w, b, SDL_MapRGB(img->format, 0, 255, 0));
 	}
 }
 
 void Line_Detection(SDL_Surface* img)
 {
+	queue *q = newQueue();
 	Uint8 r,g,b;
 	Uint32 pixel;
 	int checked = 0; //If black : check 
@@ -78,15 +82,22 @@ void Line_Detection(SDL_Surface* img)
 			}
 			if (checked && prev && empty)  //char check 
 			{
-				finishpost = y; 
+				finishpost = y-1; 
 				checked = 0; 
 				prev =0; 
 				Horizontal_Line(img,y,0,img->w);
-				Height_Detection(img, startpos, finishpost);
+				Height_Detection(img, startpos, finishpost,q);
 			}
 		}
+		while (q->length > 0)
+			{
+				char *line = deQueue(q);
+				printf("%s\n",line);
+			}
 }
-void Height_Detection(SDL_Surface* img, int start, int finish) 
+
+
+void Height_Detection(SDL_Surface* img, int start, int finish, queue* q) 
 {
 	//bitmap *img2 = loadBmp("index2.bmp");
    // draw(img2);
@@ -94,7 +105,7 @@ void Height_Detection(SDL_Surface* img, int start, int finish)
   int oneblack = 0; 
   printf("%d    %d     %d \n", c, img->w, img->h);
   int startcolum = 0; // first colum to be met  
-  int endcolum; // last line to be met 
+  int endcolum =0; // last line to be met 
   int index =0;
   
   for(int x = 0; x < img->w; x++)
@@ -122,14 +133,13 @@ void Height_Detection(SDL_Surface* img, int start, int finish)
     }
     if (oneblack == 1 && oneblank == 1)
     {
-		  endcolum = x - 1;
-		  c++; 
-		  
-		  savechar(img,start,finish,startcolum,endcolum,index);
+		  endcolum = x +1;
+		  c++;
+		  savechar(img,start,finish,startcolum,endcolum,index, q);
 		  index++;
 		  oneblack = 0;
     }
-  }
+  } 
 }
 
 int **CreateIntMatrix(int width, int height)
@@ -143,38 +153,65 @@ int **CreateIntMatrix(int width, int height)
 	return matrix;
 }
 
+      			/*  
 
-void savechar(SDL_Surface* img,int x,int y,int w, int h, int index){
-	/*SDL_Surface *dst = SDL_CreateRGBSurface(0,y-x, h-w,32,0,0,0,0); 
+void save_char(int width, int height, SDL_Surface* image, int a[],int c[]){
+	int j=0;
+	for(int i=0;i<50;i++){
+		if(a[i]==-1){break;}
+		while(c[j]!=-1){
+				if(c[j]==-2){break;}
+				else{
+					int width1= get_width(c[j],a[i],width,image);
+					int height2 = get_height(a[i],height,image);
+					SDL_Surface* new_surface=SDL_CreateRGBSurface(0,width1-1,height2-1,32,0,0,0,0);
+					SDL_Rect first;
+					first.x=c[j];
+					first.y=a[i];
+					first.w=width1;
+					first.h=height2;
+					SDL_BlitSurface(image,&first,new_surface,NULL);
+					char Output[30];
+					sprintf (Output,"%s%d%s","file/", j,"_pic.bmp");
+					SDL_SaveBMP(new_surface,Output);
+				}
+				j++;
+			}
+		j++;
+		}
+	}
+}*/
+
+void savechar(SDL_Surface* img,int x,int y,int w, int h, int index, queue* q){
+	SDL_Surface *dst = SDL_CreateRGBSurface(0,h-w,y-x,32,0,0,0,0); 
 	Uint32 white = 0xffffffff;
 	SDL_FillRect(dst,NULL,white);
 	
 	SDL_Rect srcrect;
-	SDL_Rect dstrect;
+	//SDL_Rect dstrect;
 	
 	srcrect.x = w-1;
 	srcrect.y = x;
-	srcrect.w = h-w;
+	srcrect.w = h-w ;
 	srcrect.h = y-x;
+	/*
 	dstrect.x = 10;
 	dstrect.y = 0;
 	dstrect.w = 256;
-	dstrect.h = 1024;
+	dstrect.h = 1024;*/
 	
-
-	
-	printf("w : %d\n",w); 
-	printf("h : %d\n",h); 
-	printf("x : %d\n",x); 
-	printf("y : %d\n",y); 
 	
 	SDL_UnlockSurface(img);
-	SDL_BlitSurface(img, &srcrect, dst, &dstrect);
-	SDL_LockSurface(dst);a
+	SDL_BlitSurface(img, &srcrect, dst, NULL);
+	SDL_LockSurface(dst);
 	char buffer[100]; 
-	sprintf(buffer,"SaveTMP%d",index); 
+	sprintf (buffer,"%s%d%s","tmpchar/", index,"_pic.bmp");
+	//printf("Char: %s Saved. \n",buffer);
 	SDL_SaveBMP(dst,buffer);
-	SDL_UnlockSurface(dst);*/
+	SDL_UnlockSurface(dst);
+	
+	enQueue(q, buffer);
+	
 	/*unsigned height = y-x; 
 	unsigned width = h-w;
 	bitmap* srcimg = loadBmp("index.bmp");
@@ -193,17 +230,9 @@ void savechar(SDL_Surface* img,int x,int y,int w, int h, int index){
 	resize(bmp);
 	draw(bmp);*/
 	//int height = y-x; 
-	int width = h-w;
-	
-	printf("w : %d\n",w); 
-	printf("h : %d\n",h); 
-	printf("x : %d\n",x); 
-	printf("y : %d\n",y); 
-	
-	printf("%d \n +", index);
-  for (int i = 0; i < width+ 2; i++)
-    printf("-");
-  printf("+\n| ");
+	//int width = h-w;
+	/*
+	printf("index %d \n",index);
   Uint32 pixel;
   Uint8 r = 0, g = 0, b = 0;
 	
@@ -216,29 +245,9 @@ void savechar(SDL_Surface* img,int x,int y,int w, int h, int index){
 			if(r==0) printf("#");
 			else printf(" ");
 		}
-	}
+	}*/
 	
-	printf("+");
-  for (int i = 0; i < width+ 2; i++)
-    printf("-");
-  printf("+\n| ");
 }
-
-
-void remplissage(SDL_Surface *image, int startline, int endline, int startcolum, int endcolum)
-{
-  for (int y = startline; y <= endline; y++)
-  {
-    for (int x = startcolum; x <= endcolum; x++)
-    {
-      Uint32 pixel = getpixel(image, x, y);
-      Uint8 r = 255, g = 0, b = 0;
-      pixel = SDL_MapRGB(image->format, r, g, b);
-      putpixel(image, x, y, pixel);
-    }
-  }
-}
-
 
 SDL_Surface* sdlnewchar(SDL_Surface* img,int minw,int maxw,int minh, int maxh)
 {
@@ -256,6 +265,7 @@ SDL_Surface* sdlnewchar(SDL_Surface* img,int minw,int maxw,int minh, int maxh)
 		}
 		
 	}
+	printf("GG");
 	return abc;
 		
 }
