@@ -1,27 +1,26 @@
-# Simple OCR Makefile
+# Simple SDL mini Makefile
 
-CC = gcc
-CPPFLAGS= 
-CFLAGS= -Wall -Werror -Wextra -std=c99 
+CC=gcc
+
+CPPFLAGS= `pkg-config --cflags sdl` -MMD
+CFLAGS= -std=c99 -O3
 LDFLAGS=
-LDLIBS=  -lm
+LDLIBS=  -lSDL2 -lm
 
-# Place in SRC all the files we want to build separated by a space
-SRC= main.c 
-OBJ= ${SRC:.c=.o}
-DEP= ${SRC:.c=.d}
+SRC = main.c network.c 
+OBJ = ${SRC:.c=.o}
+DEP = ${SRC:.c=.d}
 
-all: xor
+all: main
 
-main : main.o
+main: ${OBJ}
+
+-include ${DEP}
 
 clean:
-	${RM} ${OBJ} # remove object files
-	${RM} ${DEP} # remove dependency files
-	${RM} main # remove main program
-
-
-# include dependency files
--include ${DEP}
+	${RM} *.o
+	${RM} *.d
+	${RM} display
+	${RM} grayscale
 
 # END

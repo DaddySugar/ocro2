@@ -3,22 +3,24 @@
 CC=gcc
 
 CPPFLAGS= `pkg-config --cflags sdl` -MMD
-CFLAGS= -Wall -Wextra -Werror -std=c99 -O3
+CFLAGS= -Wall -Wextra -Werror -std=c99 
 LDFLAGS=
-LDLIBS=  -lSDL2
+LDLIBS=  -lSDL2 -lm
 
-all: display grayscale
+SRC = main.c treatment.c detection.c bitmap.c queue.c
+OBJ = ${SRC:.c=.o}
+DEP = ${SRC:.c=.d}
 
-main : detection.c treatment.c main.c
-display: display.o
-grayscale: pixel_operations.o grayscale.o
+all: main
 
-grayscale.o: pixel_operations.h
+main: ${OBJ}
+
+-include ${DEP}
 
 clean:
 	${RM} *.o
 	${RM} *.d
 	${RM} display
-	${RM} grayscale
+	${RM} main
 
 # END

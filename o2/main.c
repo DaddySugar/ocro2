@@ -5,6 +5,7 @@
 #include "treatment.h"
 #include "detection.h"
 
+
 int main(int argc, char ** argv)
 {
 	//unsigned long param = strtoul(argv[1], NULL, 10);
@@ -26,10 +27,11 @@ int main(int argc, char ** argv)
 		{
 			
 			img = load_image("index.bmp");
+			greyscale(img);
+			makeitblackandwhite(img,img->w,img->h);
 			Line_Detection(img);
-			//Height_Detection(img);
+		}
 			
-			}
 	else{
 	
 		img = load_image("index.bmp");
