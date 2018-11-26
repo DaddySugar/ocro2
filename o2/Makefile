@@ -7,7 +7,7 @@ CFLAGS= -Wall -Wextra -Werror -std=c99
 LDFLAGS=
 LDLIBS=  -lSDL2 -lm
 
-SRC = main.c treatment.c detection.c bitmap.c queue.c
+SRC = main.c treatment.c detection.c bitmap.c queue.c network/network.c network/xortools.c matrix.c network/learning.c
 OBJ = ${SRC:.c=.o}
 DEP = ${SRC:.c=.d}
 

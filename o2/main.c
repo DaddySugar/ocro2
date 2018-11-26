@@ -4,12 +4,19 @@
 #include <SDL2/SDL_image.h>
 #include "treatment.h"
 #include "detection.h"
+# include "queue.h"
+#include "network/network.h"
+#include "network/learning.h"
+# include "bitmap.h"
 
 
-int main(int argc, char ** argv)
+
+int main(int argc, char * argv[])
 {
 	//unsigned long param = strtoul(argv[1], NULL, 10);
 	SDL_Surface * img;
+	
+	printf("Start Training process!\n");
 	
 	if(argv[1][0] == '0') {
 		img = load_image("lena.bmp");
@@ -25,32 +32,72 @@ int main(int argc, char ** argv)
 	}
 	else if(argv[1][0] == '3')
 		{
+			img = load_image("res/learn1.bmp");
+			//learning("res/learn1", img, 1);
+			network *n = loadNetwork("network.save");
+			int i = 0;
+			char txt[100 + 1];
+			txt[100] = 0;
 			
+			
+			queue *q = newQueue();
 			img = load_image("index.bmp");
 			greyscale(img);
 			makeitblackandwhite(img,img->w,img->h);
-			Line_Detection(img);
+			Line_Detection(img,q);
+			
+			while (q->length > 0)
+			{
+				queue *line = deQueue(q);
+				while (line->length > 0)
+				{
+					bitmap* letter = loadBmp(deQueue(line));
+					
+					
+					//bitmap *letter = loadBmp(letter); 	
+					
+					resize(letter);
+					autoContrast(letter);
+					binarize(letter);
+					draw(letter);
+					printf("\n %d -- \n", q->length);
+					txt[i] = ocr(letter, n);
+					printf("\n %d -- \n", line->length);
+					printf("%c\n", txt[i]);
+						i++;
+					
+					freeBitmap(letter);
+					
+					
+				}
+			}	
+			free(q);
+			printf("\n done\n");
+			printf("%s\n", txt);
+			return 0;
 		}
 			
 	else{
 	
-		img = load_image("index.bmp");
+		img = load_image("res/learn1.bmp");
 
-		if(argv[1][0] == '2') Line_Detection(img);
+		if(argv[1][0] == '2')// Line_Detection(img);
+			return 0; 
 		
 		
 		
 		else if(argv[1][0] == '4') {
-			SDL_Surface *abc = sdlnewchar(img,450,500,200,250);
-			display_image(abc);
+			
+			printf("Start Training process 2! %s %d \n", argv[2], argc-2);
+			//char* kkk = aaa;
+			learning();
+			return 1;
 		}
 		
 		else if(argv[1][0] == '6')
 		{
-			img = load_image("pdf_test.bmp");
-			greyscale(img);
-			makeitblackandwhite(img,img->w,img->h);
-			Line_Detection(img);
+			printf("Start Training process!");
+			//learning("res/learn1", img, 1);
 		}
 		
 		else if(argv[1][0] == '7')
@@ -58,7 +105,7 @@ int main(int argc, char ** argv)
 			img = load_image("pdf_test.bmp");
 			greyscale(img);
 			makeitblackandwhite(img,img->w,img->h);
-			Line_Detection(img);
+			//Line_Detection(img);
 			//Height_Detection(img);
 		}
 		else {

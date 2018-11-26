@@ -1,6 +1,6 @@
 # ifndef NETWORK_H
 # define NETWORK_H
-
+# include "../bitmap.h"
 
 /**
  * \struct s_network
@@ -28,5 +28,8 @@ void feedForward(network *n, float *inputs);
 void backPropagation(network *n, float *outputs);
 void update(network *n, float speed); 
 float evaluate(network *n, float **samples, float **results, size_t nbSample); 
+char ocr(bitmap *, network *);
+int getCharIndex(char c);
+char getCharFromIndex(int);
 
 # endif
