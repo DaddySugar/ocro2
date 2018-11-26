@@ -1,2 +1,1 @@
-detection.o: detection.c detection.h queue.h treatment.h matrix.h \
- bitmap.h
+detection.o: detection.c detection.h queue.h treatment.h bitmap.h

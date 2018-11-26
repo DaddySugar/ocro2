@@ -4,7 +4,6 @@
 #include <SDL2/SDL_image.h>
 #include "detection.h"
 #include "treatment.h"
-#include "matrix.h"
 #include "bitmap.h"
 
 /*

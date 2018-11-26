@@ -103,67 +103,84 @@ size_t getlen(queue *q){
 void learning()
 {
 	
-  network *n = loadNetwork("network.save");
-  size_t length = 0;
-  size_t *nbCharacter = malloc(sizeof(size_t));
-  size_t *useless = malloc(sizeof(size_t));
-  queue *segmented = newQueue();
-  
-   char pathImg[] = "res/learn1.bmp";
-   printf("Path %s\n",pathImg);
+    network *n = loadNetwork("network.save");
+   size_t length = 100;
+   // size_t *nbCharacter = malloc(sizeof(size_t));
+    char pathImg[] = "res/learn1.bmp";
+    //printf("Path %s\n",pathImg);
    
     
-	SDL_Surface* sdlimg = SDL_LoadBMP(pathImg);
+    SDL_Surface* sdlimg = SDL_LoadBMP(pathImg);
     bitmap *img = loadBmp(sdlimg);
     queue * segmentedImg = newQueue();
     Line_Detection(sdlimg, segmentedImg);
-    enQueue(segmented, segmentedImg);
     freeBitmap(img);
-    length = getlen(segmentedImg);
+   // length = getlen(segmentedImg);
+    
+
+// TEST IMAGE : 
+    /*
+    while (segmentedImg->length > 0)
+    {
+        queue *line = deQueue(segmentedImg);
+    	while (line->length > 0)
+				{
+		bitmap* letter = loadBmp(deQueue(line));
+				
+		//bitmap *letter = loadBmp(letter); 	
+			
+                    resize(letter);
+		    autoContrast(letter);
+		    binarize(letter);
+		    draw(letter);
+		    printf("\n %d -- \n", segmentedImg->length);
+		printf("\n %d -- \n", line->length);
+					
+					
+                        freeBitmap(letter);
+					
+					
+				}
+			}	
+
+
+*/ // END TEST IMAGE
+
+
   
   //Problem after here
   
-  free(useless);
-  free(nbCharacter);
-  float **inputs = malloc(sizeof(float *) * length);
+  //free(nbCharacter);
+  float **inputs = malloc(sizeof(float *) * 100);
   int nbEnqueue = 0;
-  
- 
- 
 
-
-   printf("Path problem ? Create simple\n\n");
-    nbEnqueue = createSamples((queue*) deQueue(segmentedImg), inputs + nbEnqueue);
-	printf("jaajajja %d", nbEnqueue);
-	
+  // printf("Path problem ? Create simple\n\n");
+    nbEnqueue = createSamples(segmentedImg, inputs + nbEnqueue);
   
-  
-  free(segmented);
-
   char text[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-   printf("Path %s\n",text);
+  // printf("Path %s\n",text);
   
   //size_t i = 0;
 
-  float **outputs = createResults(text, length);
-printf("Strat procisdure 5\n");
+  float **outputs = createResults(text, 100);
+//printf("Strat procisdure 5\n");
   //clock_t chrono = clock();
   float error = evaluate(n, inputs, outputs, length);
-  printf("Strat procisdure 6 \n");
+//  printf("Strat procisdure 6 \n");
   float bestError = error;
   float goal = .001;
-  printf("LEARNING :\n");
-  printf("Strat procisdure 4 \n");
-  printf("  - STATUS : %d%%\n", (int) ((1 - error) / (1 - goal) * 100));
+//  printf("LEARNING :\n");
+//  printf("Strat procisdure 4 \n");
+//  printf("  - STATUS : %d%%\n", (int) ((1 - error) / (1 - goal) * 100));
   while (error > goal)
   {
     error = learn(n, inputs, outputs, length, .3, 50);
     error = error < goal ? goal : error;
-    printf("  - STATUS : %d%% ", (int) ((1 - error) / (1 - goal) * 100));
+ //   printf("  - STATUS : %d%% ", (int) ((1 - error) / (1 - goal) * 100));
     if (error < bestError)
     {
       bestError = error;
-      printf("(Update of network.save)");
+   //   printf("(Update of network.save)");
       saveNetwork("network.save", n);
     }
     printf("\n");
@@ -180,38 +197,38 @@ printf("Strat procisdure 5\n");
 
 
 int createSamples(queue *q, float **samples)
-{  float **origin = samples;
-	printf("Create Sample : %d\n",q->length);
-	while (q->length > 0)
-			{
-				queue *line = deQueue(q);
-				printf("Create Sample : %d\n",line->length);
+{  
+    float **origin = samples;
+    printf("Create Sample : %d\n",q->length);
+    while (q->length > 0)
+    {
+        queue *line = deQueue(q);
+	printf("Create Sample : %d\n",line->length);
 				
-				while (line->length > 0)
-				{
-					bitmap* letter = loadBmp(deQueue(line));
+	while (line->length > 0)
+	{
+           // bitmap* letter = malloc(sizeof(bitmap));
+            printf("draw ...");
+            SDL_Surface* aaa = deQueue(line);
+	    bitmap* letter = loadBmp(aaa);
+	    //bitmap *letter = loadBmp(letter); 	
+	    resize(letter);
+	    binarize(letter);
+	    draw(letter); 
+	    printf("\n %d -- \n", q->length);
+	    printf("\n %d -- \n", line->length);
+	    freeBitmap(letter);
+	    for (int i = 0; i < 256; i++)
+		(*samples)[i] = letter->content[i].r == 255 ? 1 : 0;
+	    samples++;
+           // free(line);
 					
 					
-					//bitmap *letter = loadBmp(letter); 	
-					
-					resize(letter);
-					autoContrast(letter);
-					binarize(letter);
-					draw(letter);
-					printf("\n %d -- \n", q->length);
-					printf("\n %d -- \n", line->length);
-					
-					freeBitmap(letter);
-					for (int i = 0; i < 256; i++)
-						  (*samples)[i] = letter->content[i].r == 255 ? 1 : 0;
-					samples++;
-					
-					
-				}
-			}	
-			free(q);
+	}
+    }	
 
-  return samples - origin;
+    free(q);
+    return samples - origin;
 }
 
 /**
