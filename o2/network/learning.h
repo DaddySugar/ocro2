@@ -24,7 +24,7 @@ void learning();
  * \param text the image segmented 
  * \param samples the table of  sample to fill 
  */
-int createSamples(queue *, float **);
+int createSamples(queue *,float** samples);
 
 /**
  * \brief Create the results of samples

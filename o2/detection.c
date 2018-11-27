@@ -66,7 +66,7 @@ void Vertical_Line(SDL_Surface* img,int w, int start, int end)
 	}
 }
 
-void Line_Detection(SDL_Surface* img,queue *q)
+void Line_Detection(SDL_Surface* img,queue *q, int* length)
 {
 	
 	Uint8 r,g,b;
@@ -114,7 +114,7 @@ void Line_Detection(SDL_Surface* img,queue *q)
 			checked = 0; 
 			prev =0; 
 			//Horizontal_Line(img,y,0,img->w);
-			Height_Detection(img, startpos, finishpost,line);
+			Height_Detection(img, startpos, finishpost,line, length);
 			enQueue(q, line);
 			
 		}
@@ -125,7 +125,7 @@ void Line_Detection(SDL_Surface* img,queue *q)
 }
 
 
-void Height_Detection(SDL_Surface* img, int start, int finish, queue* q) 
+void Height_Detection(SDL_Surface* img, int start, int finish, queue* q, int* length) 
 {
 	//bitmap *img2 = loadBmp("index2.bmp");
    // draw(img2);
@@ -161,6 +161,7 @@ void Height_Detection(SDL_Surface* img, int start, int finish, queue* q)
     {
 		  endcolum = x +1;
 		  c++;
+		  *length += 1; 
 		  savechar(img,start,finish,startcolum,endcolum, q);
 		  oneblack = 0;
     }

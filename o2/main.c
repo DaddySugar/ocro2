@@ -39,12 +39,13 @@ int main(int argc, char * argv[])
 			char txt[100 + 1];
 			txt[100] = 0;
 			
-			
+			int len = 0; 
 			queue *q = newQueue();
 			img = load_image("index.bmp");
 			greyscale(img);
 			makeitblackandwhite(img,img->w,img->h);
-			Line_Detection(img,q);
+			Line_Detection(img,q, &len);
+			
 			
 			while (q->length > 0)
 			{
@@ -74,6 +75,7 @@ int main(int argc, char * argv[])
 			free(q);
 			printf("\n done\n");
 			printf("%s\n", txt);
+			printf("There  is %d \n", len);
 			return 0;
 		}
 			
@@ -81,8 +83,8 @@ int main(int argc, char * argv[])
 	
 		img = load_image("res/learn1.bmp");
 
-		if(argv[1][0] == '2')// Line_Detection(img);
-			return 0; 
+		if(argv[1][0] == '2') generateNetwork();
+			
 		
 		
 		
