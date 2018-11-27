@@ -154,6 +154,7 @@ void learning()
 	
   
 	char text[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+//	char text[] = "A";
 
   
   //size_t i = 0;
@@ -259,7 +260,7 @@ int createSamples(queue *text, float** samples)
   while (text->length > 0)
   {
     queue *line = deQueue(text);
-	//printf("\n %d --  THIS IS IMP\n", text->length);
+    printf("\n %d --  THIS IS IMP  -- %d  \n", text->length, line->length);
     while (line->length > 0)
     {
       queue *word = deQueue(line);
@@ -273,11 +274,11 @@ int createSamples(queue *text, float** samples)
         *samples = malloc(sizeof(float) * 256);
         for (int i = 0; i < 256; i++){
           (*samples)[i] = letter->content[i].r == 255 ? 1 : 0;
-		  printf("Sample i = %d -- Value = %f.0", i,(*samples)[i]);
+		  printf("Sample i = %d -- Value = %f.0\n", i,(*samples)[i]);
 		}
         samples++;
-		printf("\n %d -- \n", line->length);
-		printf("\n %d -- \n", word->length);
+	//	printf("\n %d -- \n", line->length);
+	//	printf("\n %d -- \n", word->length);
       freeBitmap(letter);
       }
       free(word);

@@ -36,12 +36,12 @@ int main(int argc, char * argv[])
 			//learning("res/learn1", img, 1);
 			network *n = loadNetwork("network.save");
 			int i = 0;
-			char txt[100 + 1];
-			txt[100] = 0;
+			char txt[1000 + 1];
+			txt[1000] = 0;
 			
 			int len = 0; 
 			queue *q = newQueue();
-			img = load_image("index.bmp");
+		//	img = load_image("index.bmp");
 			greyscale(img);
 			makeitblackandwhite(img,img->w,img->h);
 			Line_Detection(img,q, &len);
@@ -71,6 +71,9 @@ int main(int argc, char * argv[])
 					
 					
 				}
+
+                            txt[i] = '\n'; 
+                            i++; 
 			}	
 			free(q);
 			printf("\n done\n");

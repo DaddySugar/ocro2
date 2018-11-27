@@ -74,7 +74,6 @@ void Line_Detection(SDL_Surface* img,queue *q, int* length)
 	int checked = 0; //If black : check 
 	int prev =0;    // is prev line black
 	int empty = 1;  // Empty line
-	queue *line = newQueue();
 	
 	// coordinated of the two limits of line : 
 	int startpos; 
@@ -110,6 +109,8 @@ void Line_Detection(SDL_Surface* img,queue *q, int* length)
 		}
 		if (checked && prev && empty)  //char check 
 		{
+
+	                queue *line = newQueue();
 			finishpost = y-1; 
 			checked = 0; 
 			prev =0; 
