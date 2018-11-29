@@ -24,6 +24,9 @@
  * \param result the table of results
  * \param length the length of both table
  */
+ 
+ /*#############################################################*/
+ 
 void shuffleSample(float **samples, float **results, unsigned length)
 {
   for (unsigned i = length - 1; i > 0; i--)
@@ -44,6 +47,8 @@ void shuffleSample(float **samples, float **results, unsigned length)
  * \param n the network
  * \param r the ratio of the randomization
  */
+ 
+ /*#############################################################*/
 void randomize(network *n, float r)
 {
   for (unsigned i = 0; i < n->nblayer - 1; i++)
@@ -64,6 +69,9 @@ void randomize(network *n, float r)
  * \param results the outputs of samples
  * \param nbSample the number of samples
  */
+ 
+ /*#############################################################*/
+ 
 float learn(network *n, float **samples, float **results, unsigned nbSample,
     float speed, size_t sizeBatch)
 {
@@ -78,6 +86,7 @@ float learn(network *n, float **samples, float **results, unsigned nbSample,
     }
   return evaluate(n, samples, results, nbSample);
 }
+
 /*
 size_t getlen(queue *q){
 	
@@ -95,8 +104,9 @@ size_t getlen(queue *q){
  * \param learnFiles the table of path to learn files
  * \param nbFile the number of file
  */
- 
- void learning(char *learnFiles[], size_t nbFile)
+ /*#############################################################*/
+
+void learning(char *learnFiles[], size_t nbFile)
 {
   network *n = loadNetwork("network.save");
   size_t length = 0;
@@ -117,22 +127,21 @@ size_t getlen(queue *q){
     pathImg[i-1] = 0;
     fclose(fp);
     
-	SDL_Surface* img = SDL_LoadBMP(pathImg);
+    SDL_Surface* img = SDL_LoadBMP(pathImg);
     queue * segmentedImg = newQueue();
     Line_Detection(img, segmentedImg, nbCharacter);
-	queue* paper = newQueue();
-	enQueue(paper, segmentedImg);
-    enQueue(segmented, paper);
-    
+	
+	//queue* parse = newQueue();
+	//enQueue(parse, segmented);
+    enQueue(segmented, segmentedImg);
     length += *nbCharacter;
   }
+  
   free(nbCharacter);
   float **inputs = malloc(sizeof(float *) * length);
   int nbEnqueue = 0;
   for (size_t j = 0; j < nbFile; j++)
     nbEnqueue += createSamples((queue*) deQueue(segmented), inputs + nbEnqueue);
-	//nbEnqueue += createSamples(segmented	, inputs + nbEnqueue);
-  
   free(segmented);
 
   char text[length + 1];
@@ -158,12 +167,13 @@ size_t getlen(queue *q){
   clock_t chrono = clock();
   float error = evaluate(n, inputs, outputs, length);
   float bestError = error;
-  float goal = .0001;
+  float goal = .001;
   printf("LEARNING :\n");
   printf("  - STATUS : %d%%\n", (int) ((1 - error) / (1 - goal) * 100));
   while (error > goal)
   {
-    error = learn(n, inputs, outputs, length, .3, 50);
+    error = learn(n, inputs, outputs, length, .7, 25);
+	printf("  - Error : %f -|- %f \n ", error, bestError);
     error = error < goal ? goal : error;
     printf("  - STATUS : %d%% ", (int) ((1 - error) / (1 - goal) * 100));
     if (error < bestError)
@@ -183,29 +193,18 @@ size_t getlen(queue *q){
   freeNetwork(n);
 }
 
+
 /*#############################################################*/
 
 void learningChar()
 {
-	
     network *n = loadNetwork("network.save");
-
 	int length = 0;
 	char pathImg[] = "res/A.bmp";
-	
     SDL_Surface* sdlimg = SDL_LoadBMP(pathImg);
-    bitmap *img = loadBmp(sdlimg);
-	
     queue * segmentedImg = newQueue();
-	
     Line_Detection(sdlimg, segmentedImg, &length);
-    
-	freeBitmap(img);
 	
-	queue* seg = newQueue(); 
-	enQueue(seg, segmentedImg);
-	
-
 // TEST IMAGE : 
     /*
     while (segmentedImg->length > 0)
@@ -235,31 +234,25 @@ void learningChar()
 */ // END TEST IMAGE
 
 	float **inputs = malloc(sizeof(float *) * length);
-	int nbEnqueue = 0;
+	int nbEnqueue = createSamples(segmentedImg, inputs);
+	(void)nbEnqueue;
 
-    //for (size_t j = 0; j < nbFiles; j++)
-	nbEnqueue += createSamples(seg, inputs + nbEnqueue );
-	
-  
 	//char text[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 	//char text[] = "THEWALIDYOUNEED";
 	char text[] = "A";
-
-
-	printf("Create results : \n\n");
 	float **outputs = createResults(text, length);
 	
 	clock_t chrono = clock();
 	float error = evaluate(n, inputs, outputs, length);
 	
 	float bestError = error;
-	float goal = .001;
+	float goal = .0001;
 	
 	printf("  - STATUS : %d%%\n", (int) ((1 - error) / (1 - goal) * 100));
 	
 	while (error > goal)
 	{
-		error = learn(n, inputs, outputs, length, .7, 100);
+		error = learn(n, inputs, outputs, length, .3, 50);
 		error = error < goal ? goal : error;
 		printf("  - STATUS : %d%%  ", (int) ((1 - error) / (1 - goal) * 100));
 		printf("  - Error : %f -|- %f \n ", error, bestError);
@@ -280,17 +273,22 @@ void learningChar()
 	freeNetwork(n);
 	}
 
+/*#############################################################*/
 
 
-int createSamples(queue *text, float** samples)
+void printSample(float** samples){
+		for (int i = 0; i < 256; i++){
+			  if((*samples)[i] == 0)printf("#");
+			  else printf(" ");
+			  if(i%16 == 0) printf("\n");
+		}
+}
+
+/*#############################################################*/
+
+int createSamples(queue *line, float** samples)
 {  
 	float **origin = samples;
-	
-	
-	while (text->length > 0)
-	{
-		queue *line = deQueue(text);
-		//printf("\n %d --  THIS IS IMP  -- %d  \n", text->length, line->length);
 		while (line->length > 0)
 		{
 		  queue *word = deQueue(line);
@@ -300,51 +298,23 @@ int createSamples(queue *text, float** samples)
 			resize(letter);
 			autoContrast(letter);
 			binarize(letter);
-			draw(letter);
+			//draw(letter);
 			*samples = malloc(sizeof(float) * 256);
 			for (int i = 0; i < 256; i++){
 			  (*samples)[i] = letter->content[i].r == 255 ? 1 : 0;
 			  //printf("Sample i = %d -- Value = %f.0\n", i,(*samples)[i]);
 			}
+			//printSample(samples);
 			samples++;
-		//	printf("\n %d -- \n", line->length);
-		//	printf("\n %d -- \n", word->length);
 		  freeBitmap(letter);
 		  }
 		  free(word);
 		}
 		free(line);
-	}
-	free(text);
-	/*
-		while (line->length > 0)
-		{
-			//printf("\n %d --  THIS IS IMP  -- %d  \n", text->length, line->length);
-		  queue *word = deQueue(line);
-		  while (word->length > 0)
-		  {
-			bitmap* letter = loadBmp(deQueue(word));
-			resize(letter);
-			autoContrast(letter);
-			binarize(letter);
-			draw(letter);
-			*samples = malloc(sizeof(float) * 256);
-			for (int i = 0; i < 256; i++){
-			  (*samples)[i] = letter->content[i].r == 255 ? 1 : 0;
-			  //printf("Sample i = %d -- Value = %f.0\n", i,(*samples)[i]);
-			}
-			samples++;
-		//	printf("\n %d -- \n", line->length);
-		//	printf("\n %d -- \n", word->length);
-		  freeBitmap(letter);
-		  }
-		  free(word);
-		}
-		free(line);*/
-
-	
 	return samples - origin;
 }
+
+/*#############################################################*/
 
 /**
  * \brief Create the results of samples
@@ -365,11 +335,14 @@ float **createResults(char text[], int nbSample)
     results[i] = malloc(sizeof(float) * nbOutput);
     for (size_t j = 0; j < nbOutput; j++)
       results[i][j] = 0;
-  printf("Created resultas for %c\n", text[i]);
+  //printf("Created resultas for %c\n", text[i]);
     results[i][getCharIndex(text[i])] = 1;
+	printSample(results); 
   }
   return results;
 }
+
+/*#############################################################*/
 
 /**
  * \brief free all components of a sample

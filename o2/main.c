@@ -14,6 +14,7 @@
 int main(int argc, char * argv[])
 {
 	//unsigned long param = strtoul(argv[1], NULL, 10);
+	printf("Start Training process 2! %s %d \n", argv[2], argc-2);
 	SDL_Surface * img;
 	
 	printf("Start Training process!\n");
@@ -32,7 +33,7 @@ int main(int argc, char * argv[])
 	}
 	else if(argv[1][0] == '3')
 		{
-			img = load_image("res/B.bmp");
+			img = load_image(argv[2]);
 			int len = 0; 	
 			queue *q = newQueue();
 			char segtext[1000+1];
@@ -60,7 +61,7 @@ int main(int argc, char * argv[])
 		else if(argv[1][0] == '6')
 		{
 			printf("Start Training process!");
-			//learning("res/learn1", img, 1);
+			learningChar();
 		}
 		
 		else if(argv[1][0] == '7')
