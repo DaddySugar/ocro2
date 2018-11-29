@@ -32,54 +32,12 @@ int main(int argc, char * argv[])
 	}
 	else if(argv[1][0] == '3')
 		{
-			img = load_image("res/learn1.bmp");
-			//learning("res/learn1", img, 1);
-			network *n = loadNetwork("network.save");
-			int i = 0;
-			char txt[1000 + 1];
-			txt[1000] = 0;
-			
-			int len = 0; 
+			img = load_image("res/B.bmp");
+			int len = 0; 	
 			queue *q = newQueue();
-		//	img = load_image("index.bmp");
-			greyscale(img);
-			makeitblackandwhite(img,img->w,img->h);
-			Line_Detection(img,q, &len);
-			
-			
-			while (q->length > 0)
-			{
-				queue *line = deQueue(q);
-				while (line->length > 0)
-				{
-					bitmap* letter = loadBmp(deQueue(line));
-					
-					
-					//bitmap *letter = loadBmp(letter); 	
-					
-					resize(letter);
-					autoContrast(letter);
-					binarize(letter);
-					draw(letter);
-					printf("\n %d -- \n", q->length);
-					txt[i] = ocr(letter, n);
-					printf("\n %d -- \n", line->length);
-					printf("%c\n", txt[i]);
-						i++;
-					
-					freeBitmap(letter);
-					
-					
-				}
-
-                            txt[i] = '\n'; 
-                            i++; 
-			}	
-			free(q);
-			printf("\n done\n");
-			printf("%s\n", txt);
-			printf("There  is %d \n", len);
-			return 0;
+			char segtext[1000+1];
+			segmentation(img, q,&len, segtext);
+			printf("The text is: %s", segtext);
 		}
 			
 	else{
@@ -95,7 +53,7 @@ int main(int argc, char * argv[])
 			
 			printf("Start Training process 2! %s %d \n", argv[2], argc-2);
 			//char* kkk = aaa;
-			learning();
+			learning(argv + 2, argc - 2);
 			return 1;
 		}
 		

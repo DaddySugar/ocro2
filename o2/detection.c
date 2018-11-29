@@ -3,6 +3,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include "detection.h"
+#include "network/network.h"
 #include "treatment.h"
 #include "bitmap.h"
 
@@ -298,3 +299,50 @@ SDL_Surface* sdlnewchar(SDL_Surface* img,int minw,int maxw,int minh, int maxh)
 	return abc;
 		
 }
+
+char* segmentation(SDL_Surface* img,queue *q, int* len, char txt[] ){
+	network *n = loadNetwork("network.save");
+	int i = 0;
+	//char txt[1000 + 1];
+	txt[1000] = 0;
+	
+
+	greyscale(img);
+	makeitblackandwhite(img,img->w,img->h);
+	Line_Detection(img,q, len);
+	
+	
+	while (q->length > 0)
+	{
+		queue *line = deQueue(q);
+		while (line->length > 0)
+		{
+			bitmap* letter = loadBmp(deQueue(line));
+			//bitmap *letter = loadBmp(letter); 
+			char tmp; 
+			
+			resize(letter);
+			autoContrast(letter);
+			binarize(letter);
+			draw(letter);
+			//printf("\n %d -- \n", q->length);
+			tmp = ocr(letter, n);
+			txt[i] = tmp; 
+		//	printf("\n %d -- \n", line->length);
+		//	printf("%c\n", tmp);
+				i++;
+			
+			freeBitmap(letter);
+			
+			
+		}
+
+		txt[i] = '\n'; 
+		i++; 
+	}	
+	free(q);
+	printf("\n done\n");
+	printf("%s\n", txt);
+	printf("There  is %d \n", *len);
+	return txt; 
+} 

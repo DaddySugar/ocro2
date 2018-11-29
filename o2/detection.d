@@ -1,1 +1,2 @@
-detection.o: detection.c detection.h queue.h treatment.h bitmap.h
+detection.o: detection.c detection.h queue.h network/network.h \
+ network/../bitmap.h treatment.h bitmap.h

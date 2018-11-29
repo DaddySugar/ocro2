@@ -270,13 +270,13 @@ float evaluate(network *n, float **samples, float **results, size_t nbSample)
 	printf("evaluating ... \n");
   float error = 0;
   unsigned last = n->nblayer - 1;
-  printf("%d ... \n", (int)n->nblayer);
+  //printf("%d ... \n", (int)n->nblayer);
   for (size_t i = 0; i < nbSample; i++)
   {
-	  printf("%d -- ... \n", (int)i);
+	  //printf("%d -- ... \n", (int)i);
     float dist = 0;
     feedForward(n, samples[i]);
-	printf("%d -- ... \n", (int)i);
+	//printf("%d -- ... \n", (int)i);
     for (unsigned j = 0; j < n->layers[last]; j++)
       dist += pow(n->out[last][j] - results[i][j], 2);
     error += sqrt(dist);
@@ -294,9 +294,9 @@ float evaluate(network *n, float **samples, float **results, size_t nbSample)
 char ocr(bitmap *img, network *n)
 {
   float *input = malloc(sizeof(float) * img->width * img->height);
-  for (unsigned i = 0; i < img->width * img->height; i++)
-
-  feedForward(n, input);
+  draw(img);
+  for (unsigned i = 0; i < img->width * img->height; i++) 
+	  feedForward(n, input);
 
   int best = 0;
   for (unsigned i = 1; i < n->layers[n->nblayer - 1]; i++)
