@@ -356,8 +356,8 @@ int createSamples(queue *text, float** samples)
 float **createResults(char text[], int nbSample)
 {
   size_t nbOutput = 93;
-  float **results = malloc(sizeof(float *) * (nbSample+1));
-  for (int i = 0; i < nbSample+1; i++)
+  float **results = malloc(sizeof(float *) * nbSample);
+  for (int i = 0; i < nbSample; i++)
   {
     if (text[i] == 0)
       errx(1, "The expected output is not valid");
