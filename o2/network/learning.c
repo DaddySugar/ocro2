@@ -172,7 +172,7 @@ void learning(char *learnFiles[], size_t nbFile)
   printf("  - STATUS : %d%%\n", (int) ((1 - error) / (1 - goal) * 100));
   while (error > goal)
   {
-    error = learn(n, inputs, outputs, length, .7, 25);
+    error = learn(n, inputs, outputs, length, .3, 100);
 	printf("  - Error : %f -|- %f \n ", error, bestError);
     error = error < goal ? goal : error;
     printf("  - STATUS : %d%% ", (int) ((1 - error) / (1 - goal) * 100));
