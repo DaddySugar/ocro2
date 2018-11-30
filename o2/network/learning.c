@@ -106,7 +106,7 @@ size_t getlen(queue *q){
  */
  /*#############################################################*/
 
-void learning(char *learnFiles[], size_t nbFile)
+ void learning(char *learnFiles[], size_t nbFile)
 {
   network *n = loadNetwork("network.save");
   size_t length = 0;
@@ -127,13 +127,13 @@ void learning(char *learnFiles[], size_t nbFile)
     pathImg[i-1] = 0;
     fclose(fp);
     
-    SDL_Surface* img = SDL_LoadBMP(pathImg);
-    queue * segmentedImg = newQueue();
-    Line_Detection(img, segmentedImg, nbCharacter);
 	
-	//queue* parse = newQueue();
-	//enQueue(parse, segmented);
-    enQueue(segmented, segmentedImg);
+	SDL_Surface* sdlimg = SDL_LoadBMP(pathImg);
+    queue * segmentedImg = newQueue();
+	Line_Detection(sdlimg, segmentedImg, nbCharacter);
+	
+    
+	enQueue(segmented, segmentedImg);
     length += *nbCharacter;
   }
   
@@ -172,8 +172,7 @@ void learning(char *learnFiles[], size_t nbFile)
   printf("  - STATUS : %d%%\n", (int) ((1 - error) / (1 - goal) * 100));
   while (error > goal)
   {
-    error = learn(n, inputs, outputs, length, .3, 100);
-	printf("  - Error : %f -|- %f \n ", error, bestError);
+    error = learn(n, inputs, outputs, length, .3, 50);
     error = error < goal ? goal : error;
     printf("  - STATUS : %d%% ", (int) ((1 - error) / (1 - goal) * 100));
     if (error < bestError)
@@ -200,7 +199,7 @@ void learningChar()
 {
     network *n = loadNetwork("network.save");
 	int length = 0;
-	char pathImg[] = "res/A.bmp";
+	char pathImg[] = "res/learnWalid.bmp";
     SDL_Surface* sdlimg = SDL_LoadBMP(pathImg);
     queue * segmentedImg = newQueue();
     Line_Detection(sdlimg, segmentedImg, &length);
@@ -239,10 +238,10 @@ void learningChar()
 
 	//char text[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 	//char text[] = "THEWALIDYOUNEED";
-	char text[] = "A";
+	char text[] = "WALID";
 	float **outputs = createResults(text, length);
 	
-	clock_t chrono = clock();
+
 	float error = evaluate(n, inputs, outputs, length);
 	
 	float bestError = error;
@@ -254,7 +253,7 @@ void learningChar()
 	{
 		error = learn(n, inputs, outputs, length, .3, 50);
 		error = error < goal ? goal : error;
-		printf("  - STATUS : %d%%  ", (int) ((1 - error) / (1 - goal) * 100));
+		printf("  - STATUS : %d%%  \n", (int) ((1 - error) / (1 - goal) * 100));
 		printf("  - Error : %f -|- %f \n ", error, bestError);
 		if (error < bestError)
 		{
@@ -265,7 +264,7 @@ void learningChar()
 		}
 	}
 	
-	printf("  - Time : %.6f (seconds)\n", (clock() - chrono) / 1000000.0F);
+	
 	printf("DONE\n");
 
 	freeSamples(inputs, length);

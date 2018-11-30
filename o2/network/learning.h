@@ -17,7 +17,7 @@
  * \param nbFile the number of file
  */
 //void learning(char learnFiles[], SDL_Surface *pathImg, size_t nbFile);
-void learning(char *learnFiles[], size_t nbFile);
+void learning(char *learnFiles[],size_t);
 void learningChar();
 /**
  * \brief fill the samples with a segmented image and return the size

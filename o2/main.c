@@ -54,7 +54,7 @@ int main(int argc, char * argv[])
 			
 			printf("Start Training process 2! %s %d \n", argv[2], argc-2);
 			//char* kkk = aaa;
-			learning(argv + 2, argc - 2);
+			learning(argv + 2, argc-2);
 			return 1;
 		}
 		
