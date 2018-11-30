@@ -14,7 +14,6 @@
 int main(int argc, char * argv[])
 {
 	//unsigned long param = strtoul(argv[1], NULL, 10);
-	printf("Start Training process 2! %s %d \n", argv[2], argc-2);
 	SDL_Surface * img;
 	
 	printf("Start Training process!\n");
@@ -26,9 +25,10 @@ int main(int argc, char * argv[])
 		}
 		
 	else if(argv[1][0] == '1'){
-		img = load_image("lena.bmp");
-		greyscale(img);
-		makeitblackandwhite(img,img->w,img->h);
+		img = load_image(argv[2]);
+		printf("Image OTSU + Dynamique expansion :");
+		expansiondynamique(img);
+		wholefunction(img);
 		display_image(img);
 	}
 	else if(argv[1][0] == '3')
@@ -68,7 +68,7 @@ int main(int argc, char * argv[])
 		{
 			img = load_image("pdf_test.bmp");
 			greyscale(img);
-			makeitblackandwhite(img,img->w,img->h);
+			//makeitblackandwhite(img,img->w,img->h);
 			//Line_Detection(img);
 			//Height_Detection(img);
 		}

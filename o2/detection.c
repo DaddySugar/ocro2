@@ -308,7 +308,9 @@ char* segmentation(SDL_Surface* img,queue *q, int* len, char txt[] ){
 	
 
 	greyscale(img);
-	makeitblackandwhite(img,img->w,img->h);
+	expansiondynamique(img);
+		wholefunction(img);
+//	makeitblackandwhite(img,img->w,img->h);
 	Line_Detection(img,q, len);
 	
 	

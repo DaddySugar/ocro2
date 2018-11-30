@@ -111,7 +111,7 @@ void greyscale(SDL_Surface* img)
 	}
 }
 
-void makeitblackandwhite(SDL_Surface *surface, int maxx, int maxy)
+/*void makeitblackandwhite(SDL_Surface *surface, int maxx, int maxy)
 {
   for(int x=0; x!=maxx; x++)
     {
@@ -134,4 +134,150 @@ void makeitblackandwhite(SDL_Surface *surface, int maxx, int maxy)
 	    }
 	}
     }
+}*/
+int histogramme(SDL_Surface *img,int* histo)
+{
+Uint32 pixel;
+Uint8 r,g,b;
+int total=0;
+
+for(int x=0;x<img->w;x++)
+    {
+        for(int y=0;y<img->h;y++)
+            {
+                pixel = getpixel(img,x,y);
+                SDL_GetRGB(pixel,img->format,&r,&g,&b);
+                histo[r]+=1;
+                total+=1;
+            }
+        }
+        return total;
 }
+int otsu( int* histo,int total)
+{
+ double q1=0,q2=0,m1=0,m2=0,w1=0,w2=0;
+    double sum1=0,sum2=0,between=0,max=0;
+    int pos=0;
+    for(int i = 0; i<256;i++)
+    {
+        sum1+=histo[i];
+        sum2+=histo[256-i];
+        w1=sum1/total;
+        w2=sum2/total;
+        q1+=i*histo[i];
+        q2+=(256-i)*histo[256-i];
+        m1=q1/sum1;
+        m2=q2/sum2;
+        between = w1*w2*(m1-m2)*(m1-m2);
+        if(between>max)
+        {
+            max=between;
+            pos = i;
+        }
+
+    }
+    return pos;
+}
+void wholefunction(SDL_Surface* img)
+{
+    int pos=0;
+    int total=0;
+    int *histo=calloc(256,sizeof(int));
+    total=histogramme(img, histo);
+    pos=otsu(histo,total);
+    Uint32 pixel;
+    Uint8 r,g,b;
+    for(int x=0;x<img->w;x++)
+    {
+        for(int y = 0;y<img->h;y++)
+        {
+            pixel=getpixel(img,x,y);
+            SDL_GetRGB(pixel,img->format,&r,&g,&b);
+            if (r>pos)
+                putpixel(img,x,y,SDL_MapRGB(img->format,255,255,255));
+            else
+            {
+                putpixel(img,x,y,SDL_MapRGB(img->format,0,0,0));
+            }
+}
+}
+}
+
+void expansiondynamique(SDL_Surface* img)
+{
+    int total=0;
+    int *hist=calloc(256,sizeof(int));
+    total=histogramme(img, hist);
+    Uint32 pixel;
+	total+=1;
+    Uint8 r,g,b;
+    int i = 0;
+    int mini=0;
+    int maxi=255;
+    int n;
+
+    while(i<256)
+    {
+        if (hist[i]!=0)
+        {
+            mini = i;
+            break;
+        }
+        i+=1;
+    }
+    i=255;
+    while(i>0)
+    {
+        if (hist[i]!=0)
+        {
+            maxi = i;
+            break;
+        }
+        i-=1;
+
+    }
+    for(int x = 0;x<img->w;x++)
+    {
+        for(int y = 0;y<img->h;y++)
+        {
+            pixel=getpixel(img,x,y);
+            SDL_GetRGB(pixel,img->format,&r,&g,&b);
+            n=r;
+            n=(int)(255*(n-mini)/(maxi-mini));
+            putpixel(img,x,y,SDL_MapRGB(img->format,n,n,n));
+
+        }
+
+    }
+}
+void kernel2(SDL_Surface* img,float arr[3][3])
+{
+    Uint32 pixel;
+    Uint8 r,g,b;
+    int accumulator;
+    for(int y = 1;y<img->h-1;y++)
+    {
+        for(int x = 1;x<img->w-1;x++)
+        {
+            accumulator = 0;
+            for(int j = 0;j<2;j++)
+            {
+                for(int i = 0;i<2;i++)
+                {
+                    pixel=getpixel(img,x-1+i,y-1+j);
+                    SDL_GetRGB(pixel,img->format,&r,&g,&b);
+                    accumulator+=r*arr[i][j];
+
+                }
+            }
+            putpixel(img,x,y,SDL_MapRGB(img->format,accumulator,accumulator,accumulator));
+        }
+    }
+
+}
+
+void kernel(SDL_Surface* img){
+	float arr[3][3] = {{0,0,0},{0,1,0},{0,0,0}};
+	kernel2(img, arr);
+}
+
