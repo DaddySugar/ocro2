@@ -136,10 +136,11 @@ void new_format(char text[], char format[], char buffer[])
 {
 	char tmp[strlen(text)];
 	size_t i = 0;
+	//printf("[new_format] - while loop: ");
 	while(i < strlen(text)-4 && (text[i] != '.' || text[i+1] != 'b'))
 	{
 		tmp[i] = text[i];
-		printf("%c",text[i]);
+		//printf("%c",text[i]);
 		i++;
 	}
 	tmp[i] = 0;

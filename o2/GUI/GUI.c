@@ -62,9 +62,9 @@ void on_btn_grayscale_clicked()
 	char format[] = "_grayed";
 	char buffer[strlen(file_path) + strlen(format)]; 
 	new_format(file_path,format,buffer);
-	printf("[o2] - Image grayscaled and saved as : \"%s\"\n",buffer);
 	grayscale_GUI(file_path);
 	gtk_image_set_from_file(image_box, buffer);
+	printf("[o2] - Image grayscaled and saved as : \"%s\"\n",buffer);
 }
 
 void on_btn_bw_clicked()
@@ -72,9 +72,9 @@ void on_btn_bw_clicked()
 	char format[] = "_bin";
 	char buffer[strlen(file_path) + strlen(format)]; 
 	new_format(file_path,format,buffer);
-	printf("[o2] - Image grayscaled and saved as : \"%s\"\n",buffer);
 	binarize_GUI(file_path);
 	gtk_image_set_from_file(image_box, buffer);
+	printf("[o2] - Image binarized and saved as : \"%s\"\n",buffer);
 }
 
 void on_btn_rotate_clicked()
@@ -83,6 +83,6 @@ void on_btn_rotate_clicked()
 	SDL_Surface* img2;
 	img2 = rotate90(img);
 	SDL_SaveBMP(img2, file_path);
-	printf("[o2] - Image rotated : \"%s\"\n",file_path);
 	gtk_image_set_from_file(image_box, file_path);
+	printf("[o2] - Image rotated : \"%s\"\n",file_path);
 }
