@@ -7,9 +7,8 @@
 # include "queue.h"
 #include "network/network.h"
 #include "network/learning.h"
-# include "bitmap.h"
-
-
+#include "bitmap.h"
+#include "GUI/GUI.c"
 
 int main(int argc, char * argv[])
 {
@@ -20,8 +19,9 @@ int main(int argc, char * argv[])
 	
 	if(argv[1][0] == '0') {
 		img = load_image("lena.bmp");
-		greyscale(img);
-		display_image(img);
+		//greyscale(img);
+		//display_image(img);
+		GUI(argc, argv);
 		}
 		
 	else if(argv[1][0] == '1'){

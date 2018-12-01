@@ -2,12 +2,12 @@
 
 CC=gcc
 
-CPPFLAGS= `pkg-config --cflags sdl` -MMD
+CPPFLAGS= `pkg-config --cflags sdl` `pkg-config --cflags --libs gtk+-3.0` -MMD
 CFLAGS= -Wall -Wextra -Werror -std=c99 -g -O2
 LDFLAGS=
-LDLIBS=  -lSDL2 -lm
+LDLIBS=  -lSDL2 -lm 
 
-SRC = main.c treatment.c detection.c bitmap.c queue.c network/network.c network/xortools.c network/learning.c
+SRC = main.c treatment.c detection.c bitmap.c queue.c network/network.c network/xortools.c network/learning.c GUI/GUI.c GUI/treatmentGUI.c
 OBJ = ${SRC:.c=.o}
 DEP = ${SRC:.c=.d}
 

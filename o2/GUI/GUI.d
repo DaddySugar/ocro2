@@ -1,6 +1,4 @@
-main.o: main.c treatment.h detection.h queue.h network/network.h \
- network/../bitmap.h network/learning.h network/network.h \
- network/../queue.h bitmap.h GUI/GUI.c /usr/include/gtk-3.0/gtk/gtk.h \
+GUI/GUI.o: GUI/GUI.c /usr/include/gtk-3.0/gtk/gtk.h \
  /usr/include/gtk-3.0/gdk/gdk.h /usr/include/gtk-3.0/gdk/gdkconfig.h \
  /usr/include/glib-2.0/glib.h /usr/include/glib-2.0/glib/galloca.h \
  /usr/include/glib-2.0/glib/gtypes.h \
