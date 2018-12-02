@@ -112,15 +112,17 @@ void on_btn_generate_network_clicked()
 {
 	printf("[o2] - New network created : with 280 - 256 - 86\n");
 	size_t v1 = 280;
-	size_t v2 = 256;
+	size_t v2 = 430;
 	size_t v3 = 86;
 	newNetwork(v1,v2,v3);
 }
 
 void on_btn_save_network_clicked()
 {
-	printf("[o2] - Network saved in : \"output/nn.data/\"\n");
-	saveNetwork("output/nn.data/");
+	newNetwork(v1,v2,v3);
+	char path[] = "../output/network.save";
+	printf("[o2] - Network saved in : \"%s\"\n",path);
+	saveNetwork(path);
 }
 
 void btn_ocr_clicked()
