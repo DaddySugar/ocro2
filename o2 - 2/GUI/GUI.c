@@ -119,7 +119,7 @@ void on_btn_generate_network_clicked()
 
 void on_btn_save_network_clicked()
 {
-	newNetwork(v1,v2,v3);
+	newNetwork(280,430,86);
 	char path[] = "../output/network.save";
 	printf("[o2] - Network saved in : \"%s\"\n",path);
 	saveNetwork(path);

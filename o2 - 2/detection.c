@@ -246,7 +246,14 @@ SDL_Surface* sdlnewchar(SDL_Surface* img,int minw,int maxw,int minh, int maxh)
 	}
 	printf("GG");
 	return abc;
-		
+}
+
+int segmentation_GUI(SDL_Surface* img, char txt[] ){
+	queue* q = newQueue(); 
+	int len = 0; 
+	segmentation(img, q, &len,txt)
+	return len;
+	
 }
 
 
