@@ -135,7 +135,7 @@ void btn_ocr_clicked()
 	char segtext[1000+1];
 	segmentation(img, q,&len, segtext,1);
 	//segmentation_GUI(img,txxt);
-	printf("LENGTH : %d\n",length);
+	printf("LENGTH : %d\n",len);
 	printf("OUTPUT : %s\n",segtext);
 	gtk_label_set_text(GTK_LABEL(lbl_ocr_output), segtext);
 }
