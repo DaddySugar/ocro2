@@ -7,7 +7,6 @@
 # include "queue.h"
 # include "network/NeuralNetwork.h"
 # include "bitmap.h"
-# include "matrix.h"
 # include "ocr.h"
 //# include <hunspell/hunspell.h>
 
@@ -73,7 +72,7 @@ char ocrGetChar(bitmap* letter)
 
 char* spellCheck(char *letter)
 {
-	Hunhandle *handle = Hunspell_create("/usr/share/hunspell/en_US.aff", "/usr/share/hunspell/en_US.dic");
+	/*Hunhandle *handle = Hunspell_create("/usr/share/hunspell/en_US.aff", "/usr/share/hunspell/en_US.dic");
 
 	int isCorrect = Hunspell_spell(handle, letter);
 	if(!isCorrect)
@@ -87,6 +86,7 @@ char* spellCheck(char *letter)
 		}
 	}
 	
-	saveText("output/OUTPUT_Spellcheck.txt", letter);
+	saveText("output/OUTPUT_Spellcheck.txt", letter);*/
+	(void) letter;
 	return letter;
 }

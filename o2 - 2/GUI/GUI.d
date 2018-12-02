@@ -2,7 +2,7 @@ GUI.o: GUI.c /usr/include/gtk-3.0/gtk/gtk.h \
  /usr/include/gtk-3.0/gdk/gdk.h /usr/include/gtk-3.0/gdk/gdkconfig.h \
  /usr/include/glib-2.0/glib.h /usr/include/glib-2.0/glib/galloca.h \
  /usr/include/glib-2.0/glib/gtypes.h \
- /usr/lib/glib-2.0/include/glibconfig.h \
+ /usr/lib/x86_64-linux-gnu/glib-2.0/include/glibconfig.h \
  /usr/include/glib-2.0/glib/gmacros.h \
  /usr/include/glib-2.0/glib/gversionmacros.h \
  /usr/include/glib-2.0/glib/garray.h \
@@ -43,10 +43,6 @@ GUI.o: GUI.c /usr/include/gtk-3.0/gtk/gtk.h \
  /usr/include/glib-2.0/glib/gpattern.h \
  /usr/include/glib-2.0/glib/gprimes.h /usr/include/glib-2.0/glib/gqsort.h \
  /usr/include/glib-2.0/glib/gqueue.h /usr/include/glib-2.0/glib/grand.h \
- /usr/include/glib-2.0/glib/grcbox.h \
- /usr/include/glib-2.0/glib/grefcount.h \
- /usr/include/glib-2.0/glib/grefstring.h \
- /usr/include/glib-2.0/glib/gmem.h /usr/include/glib-2.0/glib/gmacros.h \
  /usr/include/glib-2.0/glib/gregex.h \
  /usr/include/glib-2.0/glib/gscanner.h \
  /usr/include/glib-2.0/glib/gsequence.h \
@@ -418,9 +414,6 @@ GUI.o: GUI.c /usr/include/gtk-3.0/gtk/gtk.h \
  /usr/include/gtk-3.0/gtk/gtkdrawingarea.h \
  /usr/include/gtk-3.0/gtk/gtkeventbox.h \
  /usr/include/gtk-3.0/gtk/gtkeventcontroller.h \
- /usr/include/gtk-3.0/gtk/gtkeventcontrollerkey.h \
- /usr/include/gtk-3.0/gtk/gtkeventcontrollermotion.h \
- /usr/include/gtk-3.0/gtk/gtkeventcontrollerscroll.h \
  /usr/include/gtk-3.0/gtk/gtkexpander.h \
  /usr/include/gtk-3.0/gtk/gtkfixed.h \
  /usr/include/gtk-3.0/gtk/gtkfilechooser.h \
@@ -442,7 +435,6 @@ GUI.o: GUI.c /usr/include/gtk-3.0/gtk/gtk.h \
  /usr/include/gtk-3.0/gtk/gtkgesturemultipress.h \
  /usr/include/gtk-3.0/gtk/gtkgesturepan.h \
  /usr/include/gtk-3.0/gtk/gtkgesturerotate.h \
- /usr/include/gtk-3.0/gtk/gtkgesturestylus.h \
  /usr/include/gtk-3.0/gtk/gtkgestureswipe.h \
  /usr/include/gtk-3.0/gtk/gtkgesturezoom.h \
  /usr/include/gtk-3.0/gtk/gtkglarea.h /usr/include/gtk-3.0/gtk/gtkgrid.h \

@@ -5,11 +5,11 @@ CC=gcc
 CPPFLAGS= `pkg-config --cflags sdl` -MMD
 CFLAGS= -Wall -Wextra -Werror -std=c99 -g 
 LDFLAGS=
-LDLIBS=  -lSDL2 -lm -lSDL2_image  
+LDLIBS=  -lSDL2 -lm -lSDL2_image 
 
 #-lhunspell
 
-SRC = main.c treatment.c detection.c bitmap.c queue.c network/NeuralNetwork.c matrix.c tools.c ocr.c network/xortools.c 
+SRC = main.c treatment.c detection.c bitmap.c queue.c network/NeuralNetwork.c matrix.c learning.c ocr.c network/xortools.c 
 
 #network/learning.c
 OBJ = ${SRC:.c=.o}

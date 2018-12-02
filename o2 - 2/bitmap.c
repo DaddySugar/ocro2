@@ -16,43 +16,8 @@
 # include <math.h>
 # include "bitmap.h"
 
-# pragma pack(push, 1)
-struct s_bitmapFileHeader
-{
-	uint16_t bfType;
-	uint32_t bfSize;
-	uint16_t bfReserved1;
-	uint16_t bfReserved2;
-	uint32_t bfOffBytes;
-};
-# pragma pack(pop)
-typedef struct s_bitmapFileHeader bitmapFileHeader;
+/*#############################################################*/
 
-# pragma pack(push, 1)
-struct s_bitmapInfoHeader
-{
-	uint32_t biSize;
-	uint32_t biWidth;
-	uint32_t biHeight;
-	uint16_t biPlanes;
-	uint16_t biBitCount;
-	uint32_t biCompression;
-	uint32_t biSizeImage;
-	uint32_t biXPelsPerMeter;
-	uint32_t biYPelsPerMeter;
-	uint32_t biClrUsed;
-	uint32_t biClrImportant;
-};
-# pragma pack(pop)
-typedef struct s_bitmapInfoHeader bitmapInfoHeader;
-
-/**
- * \brief Create a new color with RGB as argument
- *
- * \param r red component of the new color
- * \param g green component of the new color
- * \param b blue component of the new color
- */
 color newColor(unsigned char r, unsigned char g, unsigned char b)
 {
   color col;
@@ -62,13 +27,9 @@ color newColor(unsigned char r, unsigned char g, unsigned char b)
   return col;
 }
 
-/**
- * \brief Create a new bitmap with width, height and and color array of it
- *
- * \param width is the with of the new bitmap
- * \param height is the height of the new bitmap
- * \param content is the full image
- */
+/*#############################################################*/
+
+
 bitmap *newBitmap(unsigned width, unsigned height, color *content)
 {
   bitmap *img = malloc(sizeof(bitmap));
@@ -78,23 +39,14 @@ bitmap *newBitmap(unsigned width, unsigned height, color *content)
   return img;
 }
 
-/**
- * \brief free the bitmap
- *
- * \param img the bitmap to free
- */
-
 void freeBitmap(bitmap *img)
 {
   free(img->content);
   free(img);
 }
 
-/**
- * \brief Draw an image in console
- *
- * \param img the image which will be draw
- */
+/*#############################################################*/
+
  void draw(bitmap *img)
 {
   printf("+");
@@ -114,11 +66,8 @@ void freeBitmap(bitmap *img)
   printf("+\n");
 }
 
-/**
- * \brief put the image in black and white
- *
- * \param img the image which will be binarize
- */
+/*#############################################################*/
+
 void binarize(bitmap *img)
 {
   unsigned short c = 0;
@@ -132,11 +81,7 @@ void binarize(bitmap *img)
   }
 }
 
-/**
- * \brief resize an image in 16x16 pixels
- *
- * \pram img the image which will be resize
- */
+
 void resize(bitmap *img)
 {
   unsigned newWidth = 16;
@@ -176,31 +121,10 @@ void resize(bitmap *img)
   img->height = newHeight;
 }
 
-/**
- * \brief Load a bmp file with a path in argument
- *
- * \param path is image path
- */
+/*#############################################################*/
+
 bitmap *loadBmp(SDL_Surface *downloadBMP)
 {
-  /*FILE *fp = fopen(path, "rb");
-  bitmapFileHeader fileHeader;
-  bitmapInfoHeader infoHeader;
-  bitmap *bmp = malloc(sizeof(bitmap));
-	int r;
-	
-  r = fread(&fileHeader, sizeof(bitmapFileHeader), 1, fp);
-  if (r == 0 || fileHeader.bfType != 0x4D42)
-  {
-    fclose(fp);
-    errx(1, "The expected file is not a .bmp");
-  }
-
-  r = fread(&infoHeader, sizeof(bitmapInfoHeader), 1, fp);
-	if (r == 0)
-		return NULL;
-  fseek(fp, fileHeader.bfOffBytes, SEEK_SET);*/
-  
 	Uint32 pixel;
 	
 	unsigned char  r;
@@ -236,45 +160,8 @@ bitmap *loadBmp(SDL_Surface *downloadBMP)
   return bmp;
 }
 
-/*
- * \brief save the bmp with the path name
- *
- * \param bmp the picture that we want to save
- * \param path the name for the saved picture
-*/
+/*#############################################################*/
 
-void saveBmp(char *path, bitmap *bmp)
-{
-  FILE *fp = fopen(path, "w+");
-  char start[] = {66, 77, 76, 0, 0, 0, 0, 0, 0, 0, 26, 0, 0, 0, 12, 0, 0, 0}; 
-  fwrite(start, 1, 18, fp);
-  fwrite(&(bmp->width), 2, 1, fp); 
-  fwrite(&(bmp->height), 2, 1, fp); 
-  char middle[] = {1, 0, 24, 0};
-  fwrite(middle, 1, 4, fp); 
-
-  int padding = 4 - (bmp->width * 3) % 4;
-  if (padding == 4)
-    padding = 0;
-
-  char end[] = {0, 0, 0};
-  for (int i = bmp->height - 1; i >= 0; i--)
-  {
-    for (unsigned j = 0; j < bmp->width; j++)
-      fwrite((bmp->content) + i * bmp->width + j, 3, 1, fp);
-    if (padding)
-      fwrite(end, 1, padding, fp);
-  }
-
-  fwrite(end, 1, 3, fp);
-  fclose(fp);
-}
-
-/*
- * \brief Equalize the histogram of the bitmap to raise the contrast
- *
- * \param img the bitmap
-*/
 void autoContrast(bitmap *img)
 {
   unsigned *histoR = malloc(256 * sizeof(unsigned ));
@@ -336,39 +223,4 @@ void autoContrast(bitmap *img)
   free(histoBC);
 }
 
-/*
- * \brief rotate the bmp by angle degree
- *
- * \param img the picture to rotate
- * \param angle the angle of the rotation, in degree
- */
-
-void rotate(bitmap *img, double angle)
-{
-  // angle to rad
-  angle *= 0.0174533; 
-
-  unsigned n = img->width * img->height;
-  color *content = malloc(sizeof (color) * n);
-  unsigned x, y;
-  double x2, y2;
-  for (unsigned i = 0; i < n; i++)
-    content[i] = newColor(255, 255 , 255);
-  for (unsigned i = 0; i < n; i++)
-  {
-    x = i % img->width;
-    y = (i - x) / img->width;
-    x2 = cos(angle) * ((double)x - (double)img->width / 2);
-    x2 +=  sin(angle) * ((double)y - (double)img->height / 2); 
-    x2 += (double)img->width / 2;
-    y2 = - sin(angle) * ((double)x  - (double)img->width / 2);
-    y2 += cos(angle) * ((double)y - (double)img->height / 2);
-    y2 += (double)img->height / 2;
-
-    if (x2 >= 0 && x2 < (double)img->width)
-      if (y2 >= 0 && y2 < (double)img->height)
-        content[(unsigned)y2 * img->width + (unsigned)x2] = img->content[i];
-  }
-  free(img->content);
-  img->content = content;
-}
+/*#############################################################*/

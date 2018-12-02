@@ -8,7 +8,7 @@
 #include "network/NeuralNetwork.h"
 //#include "network/learning.h"
 # include "bitmap.h"
-# include "tools.h"
+# include "learning.h"
 #include <stdlib.h>
 
 /*
@@ -48,13 +48,9 @@ int main(int argc, char * argv[])
 	//unsigned long param = strtoul(argv[1], NULL, 10);
 	SDL_Surface * img;
 	
-	printf("Start Training process!\n");
-	
 	if(argv[1][0] == '0') {
 		img = load_image(argv[2]);
-		//greyscale(img);
 		display_image(img);
-		//kkkkk(argv[2]);
 		}
 		
 	else if(argv[1][0] == '1'){
@@ -71,39 +67,27 @@ int main(int argc, char * argv[])
 			queue *q = newQueue();
 			char segtext[1000+1];
 			segmentation(img, q,&len, segtext,1);
-			//printf("The text is: %s", segtext);
+		}
+	else if(argv[1][0] == '4')
+		{
+			img = load_image(argv[2]);
+			int len = 0; 	
+			queue *q = newQueue();
+			char segtext[1000+1];
+			segmentation(img, q,&len, segtext,0);
 		}
 			
-	else{
 	
-		img = load_image("res/learn1.bmp");
-
-		if(argv[1][0] == '2') //generateNetwork();
-			return 1;
-			
-		
-		else if(argv[1][0] == '6')
-		{
-			printf("Start Training process!");
-			//learningChar();
-			main_Train(argc,argv);
-		}
-		
-		else if(argv[1][0] == '7')
-		{
-			/*queue* qqq = newQueue();
-			getFilesFromDir(qqq);*/
-			return 1;
-		}
-		else {
-			printf("\tThis option does not exist\n");
-			return 1; 
-		}
-}
+	else if(argv[1][0] == '6')
+	{
+		printf("Start Training process!");
+		main_Train(argc,argv);
+	}
 	
-	if(argv[1][0] != '4' && argv[1][0] != '0' && argv[1][0] != '1' )
-		display_image(img);
-	
+	else {
+		printf("\tThis option does not exist\n");
+		return 1; 
+	}
 
 	if(argc != 0) return 1; 
 	return 0;
