@@ -1,1 +1,2 @@
-network/NeuralNetwork.o: network/NeuralNetwork.c network/../Matrix.h
+network/NeuralNetwork.o: network/NeuralNetwork.c network/xortools.h \
+ network/../matrix.h

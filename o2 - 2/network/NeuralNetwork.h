@@ -1,14 +1,19 @@
 #ifndef NEURALNETWORK_H
 #define NEURALNETWORK_H
 
-double* CreateArray(size_t);
-void PrintGlobalValues();
 
-void Start(size_t, size_t, size_t);
-double* Predict(double[]);
-void Train(double[], double[]);
+int getCharIndex(char , char*);
+char getCharFromIndex(int, char*);
 
-void Save(char*);
-void Load(char*);
+double* makeList(size_t);
+
+void newNetwork(size_t, size_t, size_t);
+void saveNetwork(char*);
+void loadNetwork(char*);
+
+double* forwardBack(double[]);
+void updateNN(double[], double[]);
+
+
 
 #endif

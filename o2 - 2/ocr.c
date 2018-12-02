@@ -32,8 +32,8 @@ void saveText(char* path, char* text)
 char ocrGetChar(bitmap* letter)
 {
 	
-	Start(256, 430, 86);
-	Load("resources/nn.data");
+	newNetwork(256, 430, 86);
+	loadNetwork("resources/nn.data");
 	
 	
 	double input[256];
@@ -43,7 +43,7 @@ char ocrGetChar(bitmap* letter)
 	}
 
 
-	double *output = Predict(input);
+	double *output = forwardBack(input);
 
 
 	char res[86] = {'0', '1', '2', '3', '4', '5', '6', '7', '8',

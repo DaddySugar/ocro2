@@ -9,9 +9,9 @@ LDLIBS=  -lSDL2 -lm -lSDL2_image
 
 #-lhunspell
 
-SRC = main.c treatment.c detection.c bitmap.c queue.c network/NeuralNetwork.c matrix.c tools.c ocr.c
+SRC = main.c treatment.c detection.c bitmap.c queue.c network/NeuralNetwork.c matrix.c tools.c ocr.c network/xortools.c 
 
-#network/xortools.c network/learning.c
+#network/learning.c
 OBJ = ${SRC:.c=.o}
 DEP = ${SRC:.c=.d}
 

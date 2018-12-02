@@ -224,13 +224,13 @@ void GenerateInputNN(long character, long id, double input[])
 void TrainNeuralNetwork(size_t inputN, size_t hiddenN, size_t outputN, int tours, int mode)
 {
     // create the NN
-    Start(inputN, hiddenN, outputN);
+    newNetwork(inputN, hiddenN, outputN);
 
     // load the nn.data maybe make a mode as before???
     if (mode)
-        Load("resources/nn.data");
+        loadNetwork("resources/nn.data");
     
-    // print Predict with the values before training?
+    // print forwardBack with the values before training?
     
     // sand the rand
     srand(time(NULL));
@@ -278,11 +278,11 @@ void TrainNeuralNetwork(size_t inputN, size_t hiddenN, size_t outputN, int tours
 
 
         // train with the input and the output.
-        Train(input, target);
+        updateNN(input, target);
     }
     // save in nn.data
 	printf("(nn.data updated!)");
-    Save("resources/nn.data");
+    saveNetwork("resources/nn.data");
 }
 
 /*#############################################################*/
@@ -313,12 +313,12 @@ void PrintPredictNN(size_t inputN, size_t hiddenN, size_t outputN,
 {
     if (mode)
     {
-        Start(inputN, hiddenN, outputN);
-        Load("resources/nn.data");
+        newNetwork(inputN, hiddenN, outputN);
+        loadNetwork("resources/nn.data");
     }
     double input[256];
     GenerateInputNN(character, id, input);
-    double *output = Predict(input);
+    double *output = forwardBack(input);
     double target[86];
     GenerateTargetNN(target, character);
     printf("Expected result : %c\n", PredictionInterpretationNN(target));
@@ -350,14 +350,14 @@ unsigned long param = strtoul(argv[1], NULL,10);
 (void) param;
 
 
-    // ******* PREDICT/TESTS *******
+    // ******* forwardBack/TESTS *******
 
     srand(time(NULL));
     long int character, id;
 
     printf("******* Before training *******");
 
-    Start(256, 86*5, 86);
+    newNetwork(256, 86*5, 86);
 
     for (int i = 0; i < 5; i++)
     {

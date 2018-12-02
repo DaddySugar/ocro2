@@ -42,6 +42,7 @@ int kkkkk(char image[]) {
 }
 */
 
+
 int main(int argc, char * argv[])
 {
 	long int character, id;
@@ -87,7 +88,7 @@ int main(int argc, char * argv[])
 			
 			printf("Start Training process 2! %s %d \n", argv[2], argc-2);
 			//char* kkk = aaa;
-			Start(256, 86*5, 86);
+			newNetwork(256, 86*5, 86);
 
 			for (int i = 0; i < 5; i++)
 			{
@@ -128,3 +129,4 @@ int main(int argc, char * argv[])
 	if(argc != 0) return 1; 
 	return 0;
 }
+
