@@ -4,7 +4,6 @@
 #include <sys/stat.h>
 #include <time.h>
 #include <unistd.h>
-
 #include "treatment.h"
 #include "detection.h"
 # include "queue.h"
@@ -20,6 +19,8 @@ int file_exist (char *filename)
   struct stat   buffer;   
   return (stat (filename, &buffer) == 0);
 }
+
+/*#############################################################*/
 
 /*
 void getFileRes(char file[],char res[]){
@@ -57,29 +58,30 @@ queue* getFilesFromDir(queue* res) {
 }*/
 
 /*#############################################################*/
-void GenerateTargetNN(double target[], int chosen)
+
+void createResults(double result[], int chosen)
 {
     for (int i = 0; i < chosen; i++)
-        target[i] = 0;
-    target[chosen] = 1;
+        result[i] = 0;
+    result[chosen] = 1;
     for (int i = chosen + 1; i < 86; i++)
-        target[i] = 0;
+        result[i] = 0;
 }
+
+/*#############################################################*/
 
 void QuickGray(SDL_Surface* imageSurface, unsigned char ** matrix)
 {
-	// Fill matrix with grayscale's values of image
 	for (int y = 0; y < imageSurface->h; y++)
 	{
 		for (int x = 0; x < imageSurface->w; x++)
 		{
 			Uint8 r, g, b;
-			//GetRGBSDLPixel
-			SDL_GetRGB(getpixel(imageSurface,x,y),imageSurface->format,&r,&g,&b);
+			SDL_GetRGB(getpixel(imageSurface,x,y),imageSurface->format,
+															&r,&g,&b);
 			matrix[y][x] = (0.3 * r) + (0.59 * g) + (0.11 * b);
 		}
 	}
-
 	IMG_Quit();
 }
 
@@ -159,24 +161,21 @@ void QuickBan(unsigned char **grayscale, int height,
 /*#############################################################*/
 
 
-void GenerateInputNN(long character, long id, double input[])
+void createSamples(long character, double input[])
 {
     SDL_Surface * image;
     char path[100] = "";
 	
     snprintf(path, sizeof(path),
-				"resources/nn-training/Alphabet/%lu/%lu.bmp",
-							character,id);
+				"res/Alphabet/%lu/%d.bmp",
+							character,0);
 							
-	//printf("Test file : %lu with ID = %lu\n",character, id);
-	
-	
+
 	if (!file_exist (path)){
 		printf("file doesn't exist");
 		return;
 	}
 	
-
 	image = load_image(path);
 	queue *q = newQueue();
 	int length =0;
@@ -203,7 +202,7 @@ void GenerateInputNN(long character, long id, double input[])
 			autoContrast(letter);
 			binarize(letter);
 			//draw(letter);
-			//sleep(1);*/
+			//sleep(1);
 			for (int i = 0; i < 16; i++)
 			{
 				for (int j = 0; j < 16; j++)
@@ -216,78 +215,45 @@ void GenerateInputNN(long character, long id, double input[])
 		}
 	}	
 	free(q);
-	
 }
 
 /*#############################################################*/
 
-void TrainNeuralNetwork(size_t inputN, size_t hiddenN, size_t outputN, int tours, int mode)
+void start_TrainNN(int mode)
 {
-    // create the NN
-    newNetwork(inputN, hiddenN, outputN);
-
-    // load the nn.data maybe make a mode as before???
+	
+    newNetwork(256, 430, 86);
     if (mode)
-        loadNetwork("resources/nn.data");
-    
-    // print forwardBack with the values before training?
-    
-    // sand the rand
+        loadNetwork("output/network.save");
+	
     srand(time(NULL));
 
-    // character : the number represented the char chosen randomly
-    // id : the id of the image in the chosen char folder
-    long int character, id;
-     int count = 0;
-    for (int i = 0; i < tours; i++)
+    long int character;
+    int count = 0;
+    for (int i = 0; i < 10000; i++)
     {
         if (i % 10000 == 0)
         {
             printf("%d\n", count );
             count += 1;
         }
-    
-        //print ("%d \n", i );
 
-        character = rand() % 86; // change here
-		//character = 0;
-        //id = rand() % 1016;
-		id = 0;
+        character = rand() % 86; 
 
-        // retrieve the good image --> an array 16*16 with doubles inside
         double input[256];
-        GenerateInputNN(character, id, input);
-
-        // now generate the right output of this number according to character
+        createSamples(character, input);
         double target[86];
-        GenerateTargetNN(target, character);
-
-        //printf("character : %ld,    id : %ld\n", character, id);
-
-
-        /*
-        for (int i = 0; i < 86; i++)
-        {
-            if (i % 10 == 0)
-                printf("\n");
-            printf("%f   ", target[i]);
-        }
-        printf("\n\n");*/
-
-
-
-
-        // train with the input and the output.
+        createResults(target, character);
         updateNN(input, target);
     }
-    // save in nn.data
-	printf("(nn.data updated!)");
-    saveNetwork("resources/nn.data");
+	
+	printf("(Updated NN save file!)");
+    saveNetwork("output/network.save");
 }
 
 /*#############################################################*/
 
-char PredictionInterpretationNN(double output[])
+char testResults(double output[])
 {
     char res[86] = {'0','1','2','3','4','5','6',
 		'7','8','9','A','B','C','D','E','F','G','H','I','J',
@@ -308,92 +274,52 @@ char PredictionInterpretationNN(double output[])
 
 /*#############################################################*/
 
-void PrintPredictNN(size_t inputN, size_t hiddenN, size_t outputN,
-							int character, int id, int mode)
+void printResults(int character, int mode)
 {
     if (mode)
     {
-        newNetwork(inputN, hiddenN, outputN);
-        loadNetwork("resources/nn.data");
+        newNetwork(256, 430, 86);
+        loadNetwork("output/network.save");
     }
     double input[256];
-    GenerateInputNN(character, id, input);
+    createSamples(character, input);
     double *output = forwardBack(input);
     double target[86];
-    GenerateTargetNN(target, character);
-    printf("Expected result : %c\n", PredictionInterpretationNN(target));
-    printf("result : %c\n\n\n", PredictionInterpretationNN(output));
+    createResults(target, character);
+    printf("Expected result : %c\n", testResults(target));
+    printf("result : %c\n\n\n", testResults(output));
 }
 
+/*#############################################################*/
 
 
-int main2(int argc, char** argv)
-{
+void testNetwork()
+{	
+	srand(time(NULL));
+    long int character;
 
-    // ******* TRAINING *******
-
-    // if you train for the first time
-    if (argc != 3)
-        TrainNeuralNetwork(256, 86*5, 86, 1000000,0);
-    // else
-	else
-    {
-        unsigned long param = strtoul(argv[2], NULL,10);
-        if (param == 1)
-            //TrainNeuralNetwork(256, 86*5, 86, 1000000,1);
-			TrainNeuralNetwork(256, 86*5, 86, 10000,1);
-        else
-            TrainNeuralNetwork(256, 86*5, 86, 1000000,0);
-    }
-
-unsigned long param = strtoul(argv[1], NULL,10);
-(void) param;
-
-
-    // ******* forwardBack/TESTS *******
-
-    srand(time(NULL));
-    long int character, id;
-
-    printf("******* Before training *******");
-
-    newNetwork(256, 86*5, 86);
-
-    for (int i = 0; i < 5; i++)
-    {
-        character = rand() % 86; // change here
-       // id = rand() % 1016;
-	   id = 0;
-        
-        //printf("character : %ld,    id : %ld\n\n\n", character, id);
-
-        PrintPredictNN(256, 86*5, 86, character, id, 0);
-    }
-
-    printf("\n\n\n******* After Training *******");
-
-    character = rand() % 86; // change here
-    //id = rand() % 1016;
-    id = 0;
-    //printf("character : %ld,    id : %ld\n\n", character, id);
-
-    PrintPredictNN(256, 86*5, 86, character, id, 1);
-
-    
-
+    printf("\n\n");
+    character = rand() % 86;
 
     for (int i = 0; i < 100; i++)
     {
         character = rand() % 86; // change here
-        //id = rand() % 1016;
-		id = 0;
-        
-        printf("character : %ld,    id : %ld\n\n", character, id);
-
-        PrintPredictNN(256, 86*5, 86, character, id, 0);
+        printf("character : %ld \n", character);
+        printResults(character, 0);
     }
+}
 
+/*#############################################################*/
 
-	return argc > 0;
-
+void main_Train(int argc, char** argv)
+{
+	clock_t chrono = clock();
+	
+    if (argc != 3)
+        start_TrainNN(0);
+	else
+		start_TrainNN(1);
+	(void) argv;
+	testNetwork();
+	printf("  - Time : %.6f (seconds)\n", (clock() - chrono) / 1000000.0F);
 }

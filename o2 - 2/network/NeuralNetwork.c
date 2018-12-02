@@ -85,46 +85,33 @@ void newNetwork(size_t inputNodes, size_t hiddenNodes, size_t outputNodes)
 void saveNetwork(char path[])
 {
 	FILE *f = fopen(path, "w");
-	fprintf(f, "# NEURAL NETWORK DATA\n\n");
+	fprintf(f, "# NEURAL NETWORK\n\n");
+	fprintf(f, "# Structure\n%zu\n%zu\n%zu\n\n",inputIN,
+										hiddenNL,outputIN);
 
-	// Write NN's structure
-	fprintf(f, "# Structure\n");
-	fprintf(f, "%zu\n", inputIN);
-	fprintf(f, "%zu\n", hiddenNL);
-	fprintf(f, "%zu\n\n", outputIN);
-
-	// biasHidden
 	fprintf(f, "# biasHidden\n");
 	for (size_t i = 0; i < hiddenNL; i++)
-	{
 		fprintf(f, "%f\n", biasHidden[i]);
-	}
 
-	// biasOutput
 	fprintf(f, "\n# biasOutput\n");
 	for (size_t j = 0; j < outputIN; j++)
-	{
 		fprintf(f, "%f\n", biasOutput[j]);
-	}
+	
 
-	// weightIN
 	fprintf(f, "\n# weightIN\n");
 	for (size_t i = 0; i < inputIN; i++)
 	{
 		for (size_t j = 0; j < hiddenNL; j++)
-		{
 			fprintf(f, "%f\n", weightIN[i][j]);
-		}
+		
 	}
 
-	// weightHIDE
 	fprintf(f, "\n# weightHIDE\n");
 	for (size_t i = 0; i < hiddenNL; i++)
 	{
 		for (size_t j = 0; j < outputIN; j++)
-		{
 			fprintf(f, "%f\n", weightHIDE[i][j]);
-		}
+		
 	}
 
 	fclose(f);
@@ -136,74 +123,57 @@ void loadNetwork(char *path)
 {
 	FILE *f = fopen(path, "r");
 
-	int numberLines = 0;
-	char str[1000];
-	while (fgets(str, 1000, f) != NULL)
-	{
-		numberLines++;
-	}
-
-	// Make an array of the value (a double) of each line
-	double lines[numberLines];
-	size_t currentLineNumber = 0;
+	int count = 0;
+	char str[10000];
+	while (fgets(str, 1000, f) != NULL){count++;}
+	double lines[count];
+	size_t line = 0;
 	rewind(f);
 	while (fgets(str, 1000, f) != NULL)
 	{
-		if (str[0] != '#' && str[0] != '\n' && str[0] != ' ' && str[0] != '\0' && (int)str[0] != 13)
+		if (str[0] != '#' && str[0] != '\n' && str[0] != ' ' 
+										&& str[0] != '\0')
 		{
 			double a;
 			sscanf(str, "%le", &a);
-			lines[currentLineNumber] = a;
-
-			//printf("%ld : %f\n", currentLineNumber, a);
-
-			currentLineNumber++;
+			lines[line] = a;
+			line++;
 		}
 	}
 
-	/*for (int i = 0; i < numberLines; i++)
-	{
-		printf("%d : %f \n", i, lines[i]);
-	}*/
-
-	// Load values of lines in global values
 
 	inputIN = lines[0];
 	hiddenNL = lines[1];
 	outputIN = lines[2];
-	currentLineNumber = 3;
-
-	// biasHidden
+	line = 3;
+	
 	for (size_t i = 0; i < hiddenNL; i++)
 	{
-		biasHidden[i] = lines[currentLineNumber];
-		currentLineNumber++;
+		biasHidden[i] = lines[line];
+		line++;
 	}
-
-	// biasOutput
+	
 	for (size_t i = 0; i < outputIN; i++)
 	{
-		biasOutput[i] = lines[currentLineNumber];
-		currentLineNumber++;
+		biasOutput[i] = lines[line];
+		line++;
 	}
-
-	// weightIN
+	
 	for (size_t i = 0; i < inputIN; i++)
 	{
 		for (size_t j = 0; j < hiddenNL; j++)
 		{
-			weightIN[i][j] = lines[currentLineNumber];
-			currentLineNumber++;
+			weightIN[i][j] = lines[line];
+			line++;
 		}
 	}
 
-	// weightHIDE
 	for (size_t i = 0; i < hiddenNL; i++)
 	{
 		for (size_t j = 0; j < outputIN; j++)
 		{
-			weightHIDE[i][j] = lines[currentLineNumber];
-			currentLineNumber++;
+			weightHIDE[i][j] = lines[line];
+			line++;
 		}
 	}
 

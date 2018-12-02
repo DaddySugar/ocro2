@@ -45,7 +45,6 @@ int kkkkk(char image[]) {
 
 int main(int argc, char * argv[])
 {
-	long int character, id;
 	//unsigned long param = strtoul(argv[1], NULL, 10);
 	SDL_Surface * img;
 	
@@ -81,33 +80,13 @@ int main(int argc, char * argv[])
 
 		if(argv[1][0] == '2') //generateNetwork();
 			return 1;
-		
-		
-		
-		else if(argv[1][0] == '4') {
 			
-			printf("Start Training process 2! %s %d \n", argv[2], argc-2);
-			//char* kkk = aaa;
-			newNetwork(256, 86*5, 86);
-
-			for (int i = 0; i < 5; i++)
-			{
-				character = rand() % 86; // change here
-				id = rand() % 1016;
-				
-				printf("character : %ld,    id : %ld\n\n\n", character, id);
-
-				PrintPredictNN(256, 86*5, 86, character, id, 0);
-			}
-			TrainNeuralNetwork(256, 86*5, 86, 1000000,0);
-			return 1;
-		}
 		
 		else if(argv[1][0] == '6')
 		{
 			printf("Start Training process!");
 			//learningChar();
-			main2(argc,argv);
+			main_Train(argc,argv);
 		}
 		
 		else if(argv[1][0] == '7')
