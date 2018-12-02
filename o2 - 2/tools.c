@@ -201,7 +201,7 @@ void createSamples(long character, double input[])
 			resize(letter);
 			autoContrast(letter);
 			binarize(letter);
-			//draw(letter);
+			draw(letter);
 			//sleep(1);
 			for (int i = 0; i < 16; i++)
 			{
@@ -230,7 +230,7 @@ void start_TrainNN(int mode)
 
     long int character;
     int count = 0;
-    for (int i = 0; i < 10000; i++)
+    for (int i = 0; i < 1000; i++)
     {
         if (i % 10000 == 0)
         {
