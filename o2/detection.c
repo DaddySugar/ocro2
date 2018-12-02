@@ -170,18 +170,7 @@ void Height_Detection(SDL_Surface* img, int start, int finish, queue* q, int* le
   } 
 }
 
-int **CreateIntMatrix(int width, int height)
-{
-	int **matrix =
-		(int **)malloc(sizeof(int *) * height);
-	for (int i = 0; i < height; i++)
-	{
-		*(matrix + i) = (int *)malloc(sizeof(int) * width);
-	}
-	return matrix;
-}
-
-      			/*  
+/*  
 
 void save_char(int width, int height, SDL_Surface* image, int a[],int c[]){
 	int j=0;
@@ -237,46 +226,6 @@ void savechar(SDL_Surface* img,int x,int y,int w, int h, queue* q){
 	//printf("Char: %s Saved. \n",buffer);
 	SDL_SaveBMP(dst,buffer);
 	SDL_UnlockSurface(dst);
-	
-	
-	
-	
-	
-	/*unsigned height = y-x; 
-	unsigned width = h-w;
-	bitmap* srcimg = loadBmp("index.bmp");
-	color *content = malloc(sizeof(color) * height * width);
-	for (unsigned i = 0; i < height; i++)
-	{
-		printf("saved %d",i);
-		for (unsigned j = 0; j < width; j++)
-		  content[i * width + j] = srcimg->content[(i + y) * srcimg->width + j + x];
-	  }
-	char buffer[100]; 
-	
-	sprintf(buffer,"tmpqw/SaveTMP%d",index); 
-	bitmap *bmp = newBitmap(width, height, content);
-	//saveBmp(buffer,bmp);
-	resize(bmp);
-	draw(bmp);*/
-	//int height = y-x; 
-	//int width = h-w;
-	/*
-	printf("index %d \n",index);
-  Uint32 pixel;
-  Uint8 r = 0, g = 0, b = 0;
-	
-	for(;x<y ;x++)
-	{
-		for(;w<h;w++)
-		{
-			pixel = getpixel(img,w,x);
-			SDL_GetRGB(pixel,img->format,&r,&g,&b);
-			if(r==0) printf("#");
-			else printf(" ");
-		}
-	}*/
-	
 }
 
 SDL_Surface* sdlnewchar(SDL_Surface* img,int minw,int maxw,int minh, int maxh)
@@ -299,6 +248,7 @@ SDL_Surface* sdlnewchar(SDL_Surface* img,int minw,int maxw,int minh, int maxh)
 	return abc;
 		
 }
+
 
 char* segmentation(SDL_Surface* img,queue *q, int* len, char txt[] ){
 	network *n = loadNetwork("network.save");
@@ -343,6 +293,7 @@ char* segmentation(SDL_Surface* img,queue *q, int* len, char txt[] ){
 		i++; 
 	}	
 	free(q);
+	txt[i] = 0;
 	printf("\n done\n");
 	printf("%s\n", txt);
 	printf("There  is %d \n", *len);

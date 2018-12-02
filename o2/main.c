@@ -66,11 +66,9 @@ int main(int argc, char * argv[])
 		
 		else if(argv[1][0] == '7')
 		{
-			img = load_image("pdf_test.bmp");
-			greyscale(img);
-			//makeitblackandwhite(img,img->w,img->h);
-			//Line_Detection(img);
-			//Height_Detection(img);
+			/*queue* qqq = newQueue();
+			getFilesFromDir(qqq);*/
+			return 1;
 		}
 		else {
 			printf("\tThis option does not exist\n");
