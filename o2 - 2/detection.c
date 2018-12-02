@@ -251,7 +251,7 @@ SDL_Surface* sdlnewchar(SDL_Surface* img,int minw,int maxw,int minh, int maxh)
 int segmentation_GUI(SDL_Surface* img, char txt[] ){
 	queue* q = newQueue(); 
 	int len = 0; 
-	segmentation(img, q, &len,txt);
+	segmentation(img, q, &len,txt,0);
 	return len;
 	
 }
@@ -270,7 +270,7 @@ char* segmentation(SDL_Surface* img,queue *q, int* len, char txt[], int check){
 	
 	//char txt[*len * 2 + 1];
 	txt = malloc(sizeof(char) * (*len * 2+1));
-	char* checkedtext = malloc(sizeof(char) * (*len * 2+1));
+	char checkedtext[1000];
 	txt[(*len * 2)] = 0;
 	
 	
@@ -313,6 +313,7 @@ char* segmentation(SDL_Surface* img,queue *q, int* len, char txt[], int check){
 	if(check)
 	{
 		checkedtext = spellCheck(txt);
+		(void) checkedtext; 
 		printf("Please check the corrected file in output/");
 	}
 	return txt; 
