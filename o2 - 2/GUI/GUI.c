@@ -129,11 +129,13 @@ void btn_ocr_clicked()
 {
 	SDL_Surface *img = load_image(file_path);
 	gtk_image_set_from_file(image_box, file_path);
-	char txxt[1000+1];
-	txxt[1000] = 0;
-	printf("Marker1\n");
-	int length  = segmentation_GUI(img,txxt);
+	
+	int len = 0; 	
+	queue *q = newQueue();
+	char segtext[1000+1];
+	segmentation(img, q,&len, segtext,1);
+	//segmentation_GUI(img,txxt);
 	printf("LENGTH : %d\n",length);
-	printf("OUTPUT : %s\n",txxt);
-	gtk_label_set_text(GTK_LABEL(lbl_ocr_output), txxt);
+	printf("OUTPUT : %s\n",segtext);
+	gtk_label_set_text(GTK_LABEL(lbl_ocr_output), segtext);
 }

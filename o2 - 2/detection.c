@@ -257,7 +257,7 @@ int segmentation_GUI(SDL_Surface* img, char txt[] ){
 }
 
 
-char* segmentation(SDL_Surface* img,queue *q, int* len, char txt[] ){
+char* segmentation(SDL_Surface* img,queue *q, int* len, char txt[], int check){
 	//network *n = loadNetwork("network.save");
 	int i = 0;
 	
@@ -270,6 +270,7 @@ char* segmentation(SDL_Surface* img,queue *q, int* len, char txt[] ){
 	
 	//char txt[*len * 2 + 1];
 	txt = malloc(sizeof(char) * (*len * 2+1));
+	char* checkedtext = malloc(sizeof(char) * (*len * 2+1));
 	txt[(*len * 2)] = 0;
 	
 	
@@ -298,6 +299,7 @@ char* segmentation(SDL_Surface* img,queue *q, int* len, char txt[] ){
 			
 		}
 
+		
 		txt[i] = '\n'; 
 		i++; 
 	}	
@@ -306,6 +308,12 @@ char* segmentation(SDL_Surface* img,queue *q, int* len, char txt[] ){
 	printf("\nOCR done!\n");
 	printf("We have found %d Character.\n", *len);
 	printf("Text Found: \n%s\n", txt);
-	saveText("../OUTPUT.txt",txt);
+	saveText("output/OUTPUT.txt",txt);
+	
+	if(check)
+	{
+		checkedtext = spellCheck(txt);
+		printf("Please check the corrected file in output/");
+	}
 	return txt; 
 } 

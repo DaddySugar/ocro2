@@ -70,7 +70,7 @@ int main(int argc, char * argv[])
 			int len = 0; 	
 			queue *q = newQueue();
 			char segtext[1000+1];
-			segmentation(img, q,&len, segtext);
+			segmentation(img, q,&len, segtext,1);
 			//printf("The text is: %s", segtext);
 		}
 			
