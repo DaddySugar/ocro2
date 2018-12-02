@@ -33,7 +33,7 @@ char ocrGetChar(bitmap* letter)
 {
 	
 	newNetwork(256, 430, 86);
-	loadNetwork("resources/nn.data");
+	loadNetwork("output/network.save");
 	
 	
 	double input[256];
@@ -70,7 +70,7 @@ char ocrGetChar(bitmap* letter)
 
 
 //https://stackoverflow.com
-/*
+
 char* Spellcheck(char *letter)
 {
 	Hunhandle *handle = Hunspell_create("/usr/share/hunspell/en_US.aff", "/usr/share/hunspell/en_US.dic");
@@ -90,4 +90,3 @@ char* Spellcheck(char *letter)
 	saveText("OUTPUT_Spellcheck.txt", letter);
 	return letter;
 }
-*/
