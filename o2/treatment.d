@@ -1,1 +1,0 @@
-treatment.o: treatment.c
