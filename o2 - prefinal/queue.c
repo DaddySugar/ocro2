@@ -1,9 +1,4 @@
-/**
- * \file main.c
- * \brief dynamic storage
- * \author issarn_t
- * \date 09/29/2016
- */
+
 # include "queue.h"
 
 /**
