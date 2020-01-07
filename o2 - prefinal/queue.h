@@ -1,9 +1,4 @@
-/**
- * \file main.h
- * \brief dynamic storage
- * \author issarn_t
- * \date 09/29/2016
- */
+
 # ifndef QUEUE_H_DEFINED
 # define QUEUE_H_DEFINED
 # include <stdlib.h>
